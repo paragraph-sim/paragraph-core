@@ -323,7 +323,7 @@ TEST(Instruction, RemoveInnerSubroutines) {
   EXPECT_EQ(main_instr->InnerSubroutines().at(0).get(), subroutine_1_ptr);
   EXPECT_EQ(main_instr->InnerSubroutines().at(1).get(), subroutine_2_ptr);
 
-  main_instr->RemoveInnerSubroutine(subroutine_1_ptr);
+  EXPECT_OK(main_instr->RemoveInnerSubroutine(subroutine_1_ptr));
   EXPECT_EQ(main_instr->InnerSubroutines().size(), 1);
   EXPECT_EQ(main_instr->InnerSubroutines().at(0).get(), subroutine_2_ptr);
   auto& main_sub_1 = main_instr->InnerSubroutines().at(0);

@@ -140,7 +140,7 @@ class Instruction {
 
   // Removes inner subroutine with all its instruction from the instruction
   // (inner_subroutines_) vector and releases its unique_ptr
-  void RemoveInnerSubroutine(Subroutine* subroutine);
+  absl::Status RemoveInnerSubroutine(Subroutine* subroutine);
 
   // Replaces inner subroutine  with a new subroutine
   absl::Status ReplaceInnerSubroutine(

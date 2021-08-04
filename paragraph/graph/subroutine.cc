@@ -108,6 +108,11 @@ void Subroutine::EmbeddedSubroutines(
 
 void Subroutine::RemoveInstruction(Instruction* instruction) {
   CHECK(GetRootInstruction() != instruction);
+
+  // Remove users
+  for (auto& user : instruction->users_) {
+    CHECK_OK(instruction->RemoveUser(user));
+  }
   CHECK_EQ(instruction->UserCount(), 0);
 
   auto inst_it = instruction_iterators_.find(instruction);
@@ -115,7 +120,7 @@ void Subroutine::RemoveInstruction(Instruction* instruction) {
   CHECK_EQ(instruction, (*inst_it->second).get());
   // Release subroutines
   for (auto& subroutine : instruction->InnerSubroutines()) {
-    instruction->RemoveInnerSubroutine(subroutine.get());
+    CHECK_OK(instruction->RemoveInnerSubroutine(subroutine.get()));
   }
   instruction->SetParent(nullptr);
   auto list_iter = inst_it->second;
