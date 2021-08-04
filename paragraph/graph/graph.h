@@ -105,6 +105,11 @@ class Graph {
 
   bool CommunicationSetHasProcessor(int64_t processor_id) const;
 
+  // Adds extra processor_ids to collectives communication groups.
+  // Can be used to increase number of processors (and effectively batch size
+  // for data parallel workloads.
+  absl::Status ExtendCommunicationSize(int64_t num_proc);
+
   // Convert an Graph to or from a proto.
   shim::StatusOr<GraphProto> ToProto() const;
   static shim::StatusOr<std::unique_ptr<Graph>> CreateFromProto(

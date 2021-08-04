@@ -57,6 +57,21 @@ cc_binary(
     ],
 )
 
+cc_binary(
+    name = "graph_data_parallel_extender",
+    srcs = ["graph_data_parallel_extender.cc"],
+    deps = [
+        ":graph",
+        "//paragraph/shim:statusor",
+        "@com_google_absl//absl/flags:flag",
+        "@com_google_absl//absl/flags:parse",
+        "@com_google_protobuf//:protobuf",
+    ],
+    visibility = [
+        "//visibility:public",
+    ],
+)
+
 cc_test(
     name = "graph_test",
     size = "small",
