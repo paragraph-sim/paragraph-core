@@ -44,7 +44,7 @@ http_archive(
     strip_prefix = "abseil-abseil-cpp-" + hash,
 )
 
-hash = "46865ff"
+hash = "5f52dc7"
 http_archive(
   name = "libfactory",
   urls = ["https://github.com/nicmcd/libfactory/tarball/" + hash],
