@@ -1,0 +1,14 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}/@CMAKE_INSTALL_LIBEXECDIR@
+libdir=${prefix}/@CMAKE_INSTALL_LIBDIR@
+includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+datarootdir=${prefix}/@CMAKE_INSTALL_DATAROOTDIR@
+datadir=${prefix}/@CMAKE_INSTALL_DATADIR@
+
+Name: libparagraph
+Description: Parallel Execution Graph representation library
+URL: https://github.com/paragraph-sim/paragraph-core
+Version: 0.1.0
+Requires:
+Libs: -L${libdir} -lparagraph
+Cflags: -I${includedir}

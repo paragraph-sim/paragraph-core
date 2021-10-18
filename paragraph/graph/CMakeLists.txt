@@ -1,0 +1,24 @@
+protobuf_generate_cpp(
+  PROTO_SRCS
+  PROTO_HDRS
+  graph.proto
+  )
+add_library(
+  paragraph_proto
+  OBJECT
+  ${PROTO_SRCS}
+  ${PROTO_HDRS}
+  )
+set_target_properties(
+  paragraph_proto
+  PROPERTIES
+  LINKER_LANGUAGE
+  CXX
+  POSITION_INDEPENDENT_CODE
+  ON
+  )
+target_include_directories(
+  paragraph_proto
+  PUBLIC
+  ${PROTOBUF_INC}
+  )
