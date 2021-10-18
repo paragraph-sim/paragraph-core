@@ -35,9 +35,14 @@ absl::Status AllReduceTranslator::Translate(Instruction* instruction) const {
       instruction->GetProcessorIndex(instruction->GetGraph()->GetProcessorId()),
       instruction->GetCommunicationGroup(),
       instruction->GetBytesOut()));
-  RETURN_IF_ERROR(instruction->ReplaceInnerSubroutine(
-      instruction->InnerSubroutines().at(0).get(),
-      std::move(new_subroutine)));
+  if (new_subroutine->Instructions().empty()) {
+    RETURN_IF_ERROR(instruction->RemoveInnerSubroutine(
+        instruction->InnerSubroutines().at(0).get()));
+  } else {
+    RETURN_IF_ERROR(instruction->ReplaceInnerSubroutine(
+        instruction->InnerSubroutines().at(0).get(),
+        std::move(new_subroutine)));
+  }
   RETURN_IF_ERROR(instruction->ValidateIndividualized());
   return absl::OkStatus();
 }

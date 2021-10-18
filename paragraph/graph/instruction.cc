@@ -189,25 +189,34 @@ void Instruction::AppendInnerSubroutine(
   inner_subroutines_.push_back(std::move(subroutine));
 }
 
-void Instruction::RemoveInnerSubroutine(Subroutine* subroutine) {
-  CHECK_OK(subroutine->SetRootInstruction(nullptr));
-  while (!subroutine->Instructions().empty()) {
-    subroutine->RemoveInstruction(
-        (*subroutine->Instructions().begin()).get());
+absl::Status Instruction::RemoveInnerSubroutine(Subroutine* subroutine) {
+  // RETURN_IF_ERROR(subroutine->SetRootInstruction(nullptr));
+  for (auto& instruction : subroutine->InstructionsPostOrder()) {
+    std::cout << instruction->GetName() << std::endl;
+    if (instruction == subroutine->GetRootInstruction()) {
+      RETURN_IF_ERROR(subroutine->SetRootInstruction(nullptr));
+    }
+    subroutine->RemoveInstruction(instruction);
   }
   subroutine->SetGraph(nullptr);
   auto subroutine_it = std::find_if(
       inner_subroutines_.begin(), inner_subroutines_.begin(),
       [&](const std::unique_ptr<Subroutine>& subr) {
         return subr.get() == subroutine; });
-  CHECK(subroutine_it != inner_subroutines_.end());
-  CHECK_EQ(subroutine, (*subroutine_it).get());
+  RETURN_IF_FALSE(subroutine_it != inner_subroutines_.end(),
+                  absl::InvalidArgumentError) << "Target subroutine " <<
+      subroutine->GetName() << " is not found in instruction's " <<
+      name_ << " inner subroutines.";
+  RETURN_IF_FALSE(subroutine == (*subroutine_it).get(),
+                  absl::InternalError) << "Target subroutine " <<
+      subroutine->GetName() << "internal pointer is broken.";
   inner_subroutines_.erase(
       std::remove_if(inner_subroutines_.begin(), inner_subroutines_.end(),
                      [&](const std::unique_ptr<Subroutine>& subr) {
                        return subr.get() == subroutine;
                      }),
       inner_subroutines_.end());
+  return absl::OkStatus();
 }
 
 absl::Status Instruction::ReplaceInnerSubroutine(
