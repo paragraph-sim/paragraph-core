@@ -193,10 +193,8 @@ absl::Status Graph::ExtendCommunicationSize(int64_t num_proc) {
                       absl::InternalError) << "Only data parallel graphs "
           << "with single communication set are supported.";
       instruction->ClearCommunicationGroupVector();
-      CommunicationGroup new_group;
-      for (int64_t processor_id = 0; processor_id < num_proc; processor_id++) {
-        new_group.push_back(processor_id);
-      }
+      CommunicationGroup new_group(num_proc);
+      std::iota(std::begin(new_group), std::end(new_group), 0);
       instruction->AppendCommunicationGroup(new_group);
     }
   }
