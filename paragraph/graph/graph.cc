@@ -183,6 +183,24 @@ bool Graph::CommunicationSetHasProcessor(int64_t processor_id) const {
   return comm_set_.find(processor_id) != comm_set_.end();
 }
 
+absl::Status Graph::ExtendCommunicationSize(int64_t num_proc) {
+  RETURN_IF_FALSE(HasConsecutiveNaturalProcessorIds(),
+                  absl::InternalError) << "Only graphs with natural and "
+       << "consecutive processor ids are supported.";
+  for (auto& instruction : InstructionsPostOrder()) {
+    if (OpcodeIsCollectiveCommunication(instruction->GetOpcode())) {
+      RETURN_IF_FALSE(instruction->comm_group_vector_.size() == 1,
+                      absl::InternalError) << "Only data parallel graphs "
+          << "with single communication set are supported.";
+      instruction->ClearCommunicationGroupVector();
+      CommunicationGroup new_group(num_proc);
+      std::iota(std::begin(new_group), std::end(new_group), 0);
+      instruction->AppendCommunicationGroup(new_group);
+    }
+  }
+  return absl::OkStatus();
+}
+
 shim::StatusOr<GraphProto> Graph::ToProto() const {
   GraphProto proto;
   proto.set_name(name_);

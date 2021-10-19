@@ -597,6 +597,38 @@ TEST(Graph, CommunicationSet) {
   EXPECT_EQ(graph->CommunicationSetHasProcessor(7), true);
 }
 
+// Tests ExtendCommunicationSize()
+TEST(Graph, ExtendCommunicationSize) {
+  auto graph = absl::make_unique<paragraph::Graph>("test_graph", 2);
+  auto sub = absl::make_unique<paragraph::Subroutine>(
+      "test_subroutine", graph.get());
+  auto sub_ptr = sub.get();
+  sub_ptr->SetId(3);
+  graph->SetEntrySubroutine(std::move(sub));
+
+  ASSERT_OK_AND_ASSIGN(auto instr_1, paragraph::Instruction::Create(
+      paragraph::Opcode::kDelay, "first_instruction", sub_ptr));
+  instr_1->SetOps(4);
+
+  ASSERT_OK_AND_ASSIGN(auto allreduce, paragraph::Instruction::Create(
+      paragraph::Opcode::kAllReduce, "all-reduce", sub_ptr, true));
+  allreduce->SetBytesOut(48);
+  allreduce->AddOperand(instr_1);
+  paragraph::CommunicationGroup allreduce_group = {0, 1, 2};
+  allreduce->AppendCommunicationGroup(allreduce_group);
+
+  EXPECT_OK(graph->ExtendCommunicationSize(8));
+  EXPECT_EQ(graph->GetCommunicationSet().size(), 8);
+  EXPECT_EQ(graph->CommunicationSetHasProcessor(0), true);
+  EXPECT_EQ(graph->CommunicationSetHasProcessor(1), true);
+  EXPECT_EQ(graph->CommunicationSetHasProcessor(2), true);
+  EXPECT_EQ(graph->CommunicationSetHasProcessor(3), true);
+  EXPECT_EQ(graph->CommunicationSetHasProcessor(4), true);
+  EXPECT_EQ(graph->CommunicationSetHasProcessor(5), true);
+  EXPECT_EQ(graph->CommunicationSetHasProcessor(6), true);
+  EXPECT_EQ(graph->CommunicationSetHasProcessor(7), true);
+}
+
 // Tests Graph::HasConsecutiveNaturalProcessorIds() method
 TEST(Graph, HasConsecutiveNaturalProcessorIds) {
   auto graph = absl::make_unique<paragraph::Graph>("test_graph", 0);
