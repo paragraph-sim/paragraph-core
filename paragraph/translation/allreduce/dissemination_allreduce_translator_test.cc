@@ -392,7 +392,7 @@ inner_subroutines {
       )proto";
   google::protobuf::TextFormat::ParseFromString(allreduce_str,
                                                 &allreduce_proto);
-  graph->WriteToFile("/tmp/graph.textproto");
+  ASSERT_OK(graph->WriteToFile("/tmp/graph.textproto"));
   EXPECT_TRUE(google::protobuf::util::MessageDifferencer::Equals(
       allreduce->ToProto().value(), allreduce_proto));
 }
