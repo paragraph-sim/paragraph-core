@@ -190,7 +190,6 @@ void Instruction::AppendInnerSubroutine(
 }
 
 absl::Status Instruction::RemoveInnerSubroutine(Subroutine* subroutine) {
-  // RETURN_IF_ERROR(subroutine->SetRootInstruction(nullptr));
   for (auto& instruction : subroutine->InstructionsPostOrder()) {
     std::cout << instruction->GetName() << std::endl;
     if (instruction == subroutine->GetRootInstruction()) {
