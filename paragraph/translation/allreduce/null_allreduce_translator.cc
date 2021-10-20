@@ -36,7 +36,7 @@ shim::StatusOr<std::unique_ptr<Subroutine>>
         double comm_size) const {
   auto graph = calling_instruction->GetGraph();
   auto allreduce_subroutine = absl::make_unique<Subroutine>(
-      absl::StrCat(name_prefix, "_unidir-ring"), graph);
+      absl::StrCat(name_prefix, "_null"), graph);
   return allreduce_subroutine;
 }
 
