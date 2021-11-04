@@ -77,6 +77,9 @@ class Graph {
   // the entry subroutine.
   const std::vector<Instruction*> InstructionsPostOrder() const;
 
+  // Checks if all instructions in the graph are reachable in PostOrder view
+  absl::Status IsConnected() const;
+
   // Applies communication tags to the {Recv,Send}{Start,Done} instructions.
   void ApplyCommunicationTags();
 

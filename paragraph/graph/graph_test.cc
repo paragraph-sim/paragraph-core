@@ -656,7 +656,7 @@ paragraph::GraphProto create_test_proto() {
   processor_id: 1
   entry_subroutine {
     name: "test_subroutine"
-    subroutine_root_id: 8
+    subroutine_root_id: 9
     execution_probability: 1
     execution_count: 1
     instructions {
@@ -732,6 +732,14 @@ paragraph::GraphProto create_test_proto() {
         group_ids: 42
       }
     }
+    instructions {
+      name: "root"
+      opcode: "null"
+      instruction_id: 9
+      operand_ids: 3
+      operand_ids: 4
+      operand_ids: 8
+    }
   }
       )proto";
   google::protobuf::TextFormat::ParseFromString(test_graph_str,
@@ -793,11 +801,17 @@ TEST(Graph, StoreToProto) {
   while_instr->AppendInnerSubroutine(std::move(cond_sub));
 
   ASSERT_OK_AND_ASSIGN(auto send_instr, paragraph::Instruction::Create(
-      paragraph::Opcode::kSend, "send", sub_ptr, true));
+      paragraph::Opcode::kSend, "send", sub_ptr));
   paragraph::CommunicationGroup send_group = {42};
   send_instr->SetBytesIn(8.);
   send_instr->AppendCommunicationGroup(send_group);
   send_instr->SetId(8);
+
+  ASSERT_OK_AND_ASSIGN(auto root_instr, paragraph::Instruction::Create(
+      paragraph::Opcode::kNull, "root", sub_ptr, true));
+  root_instr->AddOperand(instr_3);
+  root_instr->AddOperand(while_instr);
+  root_instr->AddOperand(send_instr);
 
   google::protobuf::util::MessageDifferencer diff;
   EXPECT_TRUE(diff.Compare(graph->ToProto().value(), create_test_proto()));
@@ -810,7 +824,7 @@ TEST(Graph, LoadFromProto) {
   EXPECT_EQ(graph->GetName(), "test_graph");
   EXPECT_EQ(graph->GetProcessorId(), 1);
   EXPECT_EQ(graph->GetEntrySubroutine()->GetName(), "test_subroutine");
-  EXPECT_EQ(graph->InstructionCount(), 8);
+  EXPECT_EQ(graph->InstructionCount(), 9);
   EXPECT_EQ(graph->SubroutineCount(), 4);
 }
 
@@ -823,7 +837,7 @@ TEST(Graph, Clone) {
   EXPECT_EQ(graph_clone->GetName(), "test_graph_copy");
   EXPECT_EQ(graph_clone->GetEntrySubroutine()->GetName(),
             "test_subroutine");
-  EXPECT_EQ(graph_clone->InstructionCount(), 8);
+  EXPECT_EQ(graph_clone->InstructionCount(), 9);
   EXPECT_EQ(graph_clone->SubroutineCount(), 4);
   google::protobuf::util::MessageDifferencer diff;
   ASSERT_OK_AND_ASSIGN(auto graph_proto, graph->ToProto());
@@ -836,7 +850,7 @@ TEST(Graph, Clone) {
   EXPECT_EQ(graph_new->GetName(), "test_graph_new_id");
   EXPECT_EQ(graph_new->GetEntrySubroutine()->GetName(),
             "test_subroutine");
-  EXPECT_EQ(graph_new->InstructionCount(), 8);
+  EXPECT_EQ(graph_new->InstructionCount(), 9);
   EXPECT_EQ(graph_new->SubroutineCount(), 4);
 }
 
@@ -907,6 +921,9 @@ TEST(Graph, Individualize) {
 
   ASSERT_OK_AND_ASSIGN(auto instr_5, paragraph::Instruction::Create(
       paragraph::Opcode::kDelay, "compute", sub_ptr, true));
+  instr_5->AddOperand(instr_1);
+  instr_5->AddOperand(instr_2);
+  instr_5->AddOperand(instr_3);
   instr_5->AddOperand(instr_4);
 
   EXPECT_OK(graph->ValidateComposite());
@@ -955,11 +972,17 @@ TEST(Graph, Validate) {
             absl::InternalError("Instruction test_2 ID = 1 is not unique."));
 
   instr_2->SetId(2);
+  EXPECT_EQ(
+      graph_2_ptr->ValidateComposite(), absl::InternalError(
+        "Subroutine test_subroutine has disconnected instruction test_2"));
+  instr_1->AddOperand(instr_2);
+
   EXPECT_OK(graph_2_ptr->ValidateComposite());
 
   ASSERT_OK_AND_ASSIGN(auto instr_3, paragraph::Instruction::Create(
       paragraph::Opcode::kDelay, "test", sub_ptr));
   instr_3->SetOps(4);
+  instr_1->AddOperand(instr_3);
   EXPECT_EQ(graph_2_ptr->ValidateComposite(), absl::OkStatus());
 
   auto graph_3 = absl::make_unique<paragraph::Graph>("test_graph", 3);

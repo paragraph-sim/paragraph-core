@@ -119,6 +119,11 @@ class Subroutine {
   std::vector<Instruction*> InstructionsPostOrder(
       bool skip_inner_subroutines = false);
 
+  // Checks if all instructions in subroutines are connected to the root,
+  // i.e. there are no instructions in instruction list that don't appear in
+  // PostOrder view
+  absl::Status IsConnected() const;
+
   // Removes an instruction from the subroutine instructions list
   void RemoveInstruction(Instruction* instruction);
 

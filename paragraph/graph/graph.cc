@@ -66,6 +66,11 @@ const std::vector<Instruction*> Graph::InstructionsPostOrder() const {
   return postorder;
 }
 
+absl::Status Graph::IsConnected() const {
+  RETURN_IF_ERROR(entry_subroutine_->IsConnected());
+  return absl::OkStatus();
+}
+
 void Graph::ApplyCommunicationTags() {
   absl::flat_hash_map<uint64_t, uint64_t> tag_counters;
   for (Instruction* instruction : InstructionsPostOrder()) {
@@ -415,6 +420,8 @@ absl::Status Graph::ValidateCommon() const {
       instruction_ids.insert(instruction->GetId());
     }
   }
+  // Check graph is fully connected
+  RETURN_IF_ERROR(IsConnected());
   return absl::OkStatus();
 }
 

@@ -75,10 +75,34 @@ void Subroutine::PostOrderHelper(
   postorder->pop_back();
   for (auto& instruction : instructions_) {
     if (visited->find(instruction.get()) == visited->end()) {
-      postorder->push_back(instruction.get());
+      instruction->PostOrderHelper(
+          visited, postorder, skip_inner_subroutines);
     }
   }
   postorder->push_back(root_instruction_);
+}
+
+absl::Status Subroutine::IsConnected() const {
+  RETURN_IF_FALSE(root_instruction_ != nullptr,
+                  absl::InternalError)
+    << "Subroutine " << name_ << " does not have the root instruction.";
+  absl::flat_hash_map<Instruction*, bool> visited;
+  std::vector<Instruction*> postorder;
+  root_instruction_->PostOrderHelper(&visited, &postorder, true);
+  absl::flat_hash_set<Instruction*> connected_instructions;
+  for (auto& seen_instruction : postorder) {
+    RETURN_IF_FALSE(connected_instructions.insert(seen_instruction).second,
+                    absl::InternalError) << "Subroutine "
+      << name_ << " has repeated instructions " << seen_instruction->GetName();
+  }
+  for (auto& instruction : instructions_) {
+    RETURN_IF_ERROR(instruction->IsConnected());
+    RETURN_IF_FALSE(connected_instructions.find(instruction.get()) !=
+                    connected_instructions.end(), absl::InternalError)
+      << "Subroutine " << name_ << " has disconnected instruction "
+      << instruction->GetName();
+  }
+  return absl::OkStatus();
 }
 
 std::vector<Instruction*> Subroutine::InstructionsPostOrder(

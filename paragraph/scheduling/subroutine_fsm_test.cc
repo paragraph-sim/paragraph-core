@@ -181,7 +181,7 @@ TEST(SubroutineFsm, PrepareToSchedule) {
   ASSERT_OK_AND_ASSIGN(auto instr_1, paragraph::Instruction::Create(
       paragraph::Opcode::kDelay, "dummy", sub_ptr));
   ASSERT_OK_AND_ASSIGN(auto instr_2, paragraph::Instruction::Create(
-      paragraph::Opcode::kDelay, "root", sub_ptr, true));
+      paragraph::Opcode::kDelay, "dummy_2", sub_ptr));
   instr_2->AddOperand(instr_1);
 
   ASSERT_OK_AND_ASSIGN(auto while_instr, paragraph::Instruction::Create(
@@ -202,6 +202,11 @@ TEST(SubroutineFsm, PrepareToSchedule) {
   cond_instr->SetOps(4);
   while_instr->AppendInnerSubroutine(std::move(cond_sub));
   while_instr->AddOperand(instr_1);
+
+  ASSERT_OK_AND_ASSIGN(auto root_instr, paragraph::Instruction::Create(
+      paragraph::Opcode::kNull, "root", sub_ptr, true));
+  root_instr->AddOperand(instr_2);
+  root_instr->AddOperand(while_instr);
 
   ASSERT_OK_AND_ASSIGN(auto scheduler,
                        paragraph::GraphScheduler::Create(graph.get()));

@@ -246,7 +246,7 @@ TEST(InstructionFsm, PrepareToSchedule) {
   ASSERT_OK_AND_ASSIGN(auto instr_1, paragraph::Instruction::Create(
       paragraph::Opcode::kDelay, "dummy", sub_ptr));
   ASSERT_OK_AND_ASSIGN(auto instr_2, paragraph::Instruction::Create(
-      paragraph::Opcode::kDelay, "root", sub_ptr, true));
+      paragraph::Opcode::kDelay, "dummy_2", sub_ptr));
   instr_2->AddOperand(instr_1);
 
   ASSERT_OK_AND_ASSIGN(auto while_instr, paragraph::Instruction::Create(
@@ -266,6 +266,11 @@ TEST(InstructionFsm, PrepareToSchedule) {
   cond_instr->SetOps(4);
   while_instr->AppendInnerSubroutine(std::move(cond_sub));
   while_instr->AddOperand(instr_1);
+
+  ASSERT_OK_AND_ASSIGN(auto root_instr, paragraph::Instruction::Create(
+      paragraph::Opcode::kNull, "root", sub_ptr, true));
+  root_instr->AddOperand(instr_2);
+  root_instr->AddOperand(while_instr);
 
   ASSERT_OK_AND_ASSIGN(auto scheduler,
                        paragraph::GraphScheduler::Create(graph.get()));
@@ -323,7 +328,7 @@ TEST(InstructionFsm, PickSubroutine) {
   cond3_instr->SetOps(4);
 
   ASSERT_OK_AND_ASSIGN(auto allreduce, paragraph::Instruction::Create(
-      paragraph::Opcode::kCall, "allreduce", sub_ptr, true));
+      paragraph::Opcode::kCall, "allreduce", sub_ptr));
   auto reduction_sub = absl::make_unique<paragraph::Subroutine>(
       "reduction_subroutine", graph.get());
   ASSERT_OK_AND_ASSIGN(auto reduce_instr, paragraph::Instruction::Create(
@@ -348,6 +353,12 @@ TEST(InstructionFsm, PickSubroutine) {
       paragraph::Opcode::kDelay, "condition", cond_sub.get(), true));
   cond_instr->SetOps(4);
   while_instr->AppendInnerSubroutine(std::move(cond_sub));
+
+  ASSERT_OK_AND_ASSIGN(auto root_instr, paragraph::Instruction::Create(
+      paragraph::Opcode::kNull, "root", sub_ptr, true));
+  root_instr->AddOperand(conditional);
+  root_instr->AddOperand(while_instr);
+  root_instr->AddOperand(allreduce);
 
   ASSERT_OK_AND_ASSIGN(auto scheduler,
                        paragraph::GraphScheduler::Create(graph.get()));
