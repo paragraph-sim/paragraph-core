@@ -281,7 +281,7 @@ class Instruction {
   // Checks if all instructions in inner_subroutines_ are connected to the root,
   // i.e. there is no instructions in inner_subroutines instruction list that
   // don't appear in PostOrder view
-  absl::Status IsConnected() const;
+  absl::Status IsConnected(bool drop_disconnected = false);
 
   // Vector that encodes all communication directions for the instruction
   // For Send/Recv should have size one since it's a direct communication

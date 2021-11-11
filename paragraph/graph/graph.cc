@@ -66,8 +66,8 @@ const std::vector<Instruction*> Graph::InstructionsPostOrder() const {
   return postorder;
 }
 
-absl::Status Graph::IsConnected() const {
-  RETURN_IF_ERROR(entry_subroutine_->IsConnected());
+absl::Status Graph::IsConnected(bool drop_disconnected) {
+  RETURN_IF_ERROR(entry_subroutine_->IsConnected(drop_disconnected));
   return absl::OkStatus();
 }
 
@@ -221,7 +221,7 @@ shim::StatusOr<GraphProto> Graph::ToProto() const {
 }
 
 shim::StatusOr<std::unique_ptr<Graph>> Graph::CreateFromProto(
-      const GraphProto& proto, bool reset_ids) {
+      const GraphProto& proto, bool reset_ids, bool skip_validation) {
   auto graph = absl::make_unique<Graph>(proto.name(), proto.processor_id());
   ASSIGN_OR_RETURN(auto entry_subroutine,
                    Subroutine::CreateFromProto(proto.entry_subroutine(),
@@ -237,10 +237,12 @@ shim::StatusOr<std::unique_ptr<Graph>> Graph::CreateFromProto(
                                         instruction->GetId() + 1);
     }
   }
-  if (graph->IsIndividualized()) {
-    RETURN_IF_ERROR(graph->ValidateIndividualized());
-  } else {
-    RETURN_IF_ERROR(graph->ValidateComposite());
+  if (!skip_validation) {
+    if (graph->IsIndividualized()) {
+      RETURN_IF_ERROR(graph->ValidateIndividualized());
+    } else {
+      RETURN_IF_ERROR(graph->ValidateComposite());
+    }
   }
   return graph;
 }
@@ -420,8 +422,6 @@ absl::Status Graph::ValidateCommon() const {
       instruction_ids.insert(instruction->GetId());
     }
   }
-  // Check graph is fully connected
-  RETURN_IF_ERROR(IsConnected());
   return absl::OkStatus();
 }
 

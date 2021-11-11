@@ -78,7 +78,7 @@ class Graph {
   const std::vector<Instruction*> InstructionsPostOrder() const;
 
   // Checks if all instructions in the graph are reachable in PostOrder view
-  absl::Status IsConnected() const;
+  absl::Status IsConnected(bool drop_disconnected = false);
 
   // Applies communication tags to the {Recv,Send}{Start,Done} instructions.
   void ApplyCommunicationTags();
@@ -116,7 +116,8 @@ class Graph {
   // Convert an Graph to or from a proto.
   shim::StatusOr<GraphProto> ToProto() const;
   static shim::StatusOr<std::unique_ptr<Graph>> CreateFromProto(
-      const GraphProto& proto, bool reset_ids = false);
+      const GraphProto& proto, bool reset_ids = false,
+      bool skip_validation = false);
 
   // Graph IO interface
   // Filenames that end in .pb are treated as binary proto files.

@@ -972,11 +972,6 @@ TEST(Graph, Validate) {
             absl::InternalError("Instruction test_2 ID = 1 is not unique."));
 
   instr_2->SetId(2);
-  EXPECT_EQ(
-      graph_2_ptr->ValidateComposite(), absl::InternalError(
-        "Subroutine test_subroutine has disconnected instruction test_2"));
-  instr_1->AddOperand(instr_2);
-
   EXPECT_OK(graph_2_ptr->ValidateComposite());
 
   ASSERT_OK_AND_ASSIGN(auto instr_3, paragraph::Instruction::Create(

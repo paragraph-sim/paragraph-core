@@ -82,7 +82,8 @@ void Subroutine::PostOrderHelper(
   postorder->push_back(root_instruction_);
 }
 
-absl::Status Subroutine::IsConnected() const {
+absl::Status Subroutine::IsConnected(bool drop_disconnected) {
+  std::cout << name_ << " " << drop_disconnected << std::endl;
   RETURN_IF_FALSE(root_instruction_ != nullptr,
                   absl::InternalError)
     << "Subroutine " << name_ << " does not have the root instruction.";
@@ -95,12 +96,30 @@ absl::Status Subroutine::IsConnected() const {
                     absl::InternalError) << "Subroutine "
       << name_ << " has repeated instructions " << seen_instruction->GetName();
   }
-  for (auto& instruction : instructions_) {
-    RETURN_IF_ERROR(instruction->IsConnected());
-    RETURN_IF_FALSE(connected_instructions.find(instruction.get()) !=
-                    connected_instructions.end(), absl::InternalError)
-      << "Subroutine " << name_ << " has disconnected instruction "
-      << instruction->GetName();
+  if (drop_disconnected) {
+    std::vector<Instruction*> disconnected;
+    for (auto& instruction : instructions_) {
+      if (connected_instructions.find(instruction.get()) ==
+          connected_instructions.end()) {
+        disconnected.push_back(instruction.get());
+      } else {
+        RETURN_IF_ERROR(instruction->IsConnected(drop_disconnected));
+      }
+    }
+    while (!disconnected.empty()) {
+      auto instr_to_remove = disconnected.back();
+      disconnected.pop_back();
+      std::cout << "Removing instr " << instr_to_remove->GetName() << std::endl;
+      RemoveInstruction(instr_to_remove);
+    }
+  } else {
+    for (auto& instruction : instructions_) {
+      RETURN_IF_ERROR(instruction->IsConnected(drop_disconnected));
+      RETURN_IF_FALSE(connected_instructions.find(instruction.get()) !=
+                      connected_instructions.end(), absl::InternalError)
+        << "Subroutine " << name_ << " has disconnected instruction "
+        << instruction->GetName();
+    }
   }
   return absl::OkStatus();
 }

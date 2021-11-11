@@ -122,7 +122,7 @@ class Subroutine {
   // Checks if all instructions in subroutines are connected to the root,
   // i.e. there are no instructions in instruction list that don't appear in
   // PostOrder view
-  absl::Status IsConnected() const;
+  absl::Status IsConnected(bool drop_disconnected = false);
 
   // Removes an instruction from the subroutine instructions list
   void RemoveInstruction(Instruction* instruction);
