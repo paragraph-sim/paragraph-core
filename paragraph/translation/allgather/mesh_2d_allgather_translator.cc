@@ -55,7 +55,11 @@ Mesh2dAllGatherTranslator::Mesh2dAllGatherTranslator(
     { "algorithm": "mesh-1d" }
   )"_json;
   // If we have a barrier in 2D Mesh, we need to instantiate a barrier before
-  // all-gather in each dimension
+  // all-gather in each dimension. Synchronizing processors only in the
+  // dimension that is communicating is enough (as opposed to i.e. sync current
+  // and previous dimension) because the synchronized processor by the end of
+  // the barrier would receive and send all the data from the previous stage,
+  // even if not all other processors from the previous stage have finished.
   if (config.find("barrier") != config.end()) {
     implicit_config["barrier"] = config["barrier"];
   }
@@ -80,83 +84,104 @@ shim::StatusOr<std::unique_ptr<Subroutine>>
   RETURN_IF_FALSE(comm_group.at(processor_index) == processor_id,
                   absl::InvalidArgumentError) <<
       "Processor index points to the wrong Processor ID.";
-  Instruction* previous_instruction = nullptr;
-  CommunicationGroup local_comm_group = CommunicationGroupLocalProjection(
-      processor_id, comm_group, dimension_sizes_, concentration_);
-  std::vector<double> stage_comm_sizes;
-  // We prepare communication sizes for each stage and each dimension as
+  size_t num_dimensions = dimension_sizes_.size();
+  // Vector of previous instruction for every concurrent stream
+  std::vector<Instruction*> previous_instructions(
+      num_dimensions, nullptr);
+  // We initialize communication sizes for each stage and each dimension as
   // dimension and/or communication groups could be uneven
-  for (size_t dim = 0; dim < dimension_sizes_.size(); dim++) {
+  std::vector<double> stage_comm_sizes;
+  for (size_t par_stream = 0; par_stream < num_dimensions; par_stream++) {
     if ((comm_size == 0) || (comm_group.empty())) {
       stage_comm_sizes.push_back(0);
     } else {
       stage_comm_sizes.push_back(
-          comm_size / comm_group.size() / dimension_sizes_.size());
-      if (integrated_local_exchange_) {
-        // Additionally accomodating split of traffic from concentrator among
-        // dimensions
-        stage_comm_sizes.at(dim) /= dimension_sizes_.size();
-      }
+          comm_size / comm_group.size() / num_dimensions);
     }
   }
+  bool conc_step = (concentration_ > 1) && !integrated_local_exchange_;
   // We have as many stages as dimensions in the Mesh
-  for (size_t stage = 0; stage < dimension_sizes_.size(); stage++) {
-    // We run AllGather in parallel for every dimension of Mesh
-    std::vector<Instruction*> parallel_allgather;
-    for (size_t dim = 0; dim < dimension_sizes_.size(); dim++) {
-      auto new_comm_group = CommunicationGroupProjectionOnGrid(
-          processor_id, comm_group, dim, integrated_local_exchange_,
+  // At every stage, we span as many concurrent single-dimensional all-gathers
+  // as number of dimensions N we have in mesh. For every concurrent stream,
+  // we start with the partial exchange over dimension (i + 0) % N, then
+  // dimension (i + 1) % N, and to the last dimension (in generic case).
+  // Before starting partial exchange over each dimension, we need to
+  // synchronize the processors that participate in the exchange step and the
+  // processors that participated in the previous step.
+  // If `integrated_local_exchange_` set, we add communicators to the last stage
+  // exchange to minimize traffic. Otherwise, we run local communicators
+  // exchange as the last step.
+  for (size_t par_stream = 0; par_stream < num_dimensions; par_stream++) {
+    for (size_t stage = 0; stage < num_dimensions; stage++) {
+      size_t dim = (par_stream + stage) % num_dimensions;
+      bool integrated_local_exchange = integrated_local_exchange_
+        && ((stage + 1) == num_dimensions);
+      std::unordered_set<size_t> comm_dimensions;
+      CHECK(comm_dimensions.insert(dim + 1).second);
+      // We only need to communicate data between concentrators once. If we
+      // don't have a separate stage for that in the end, we do it in the last
+      // stage.
+      if (integrated_local_exchange) {
+        CHECK(comm_dimensions.insert(0).second);
+      }
+      auto new_comm_group = CommunicationGroupProjectionOnDimensions(
+          comm_dimensions, processor_id, comm_group,
           dimension_sizes_, concentration_);
       // Every new stage we should increase communication size
       // On the first stage we only exchange data laying in the 1st dimension
       // On the second stage we exchange data from both 1st and 2nd dimensions
-      stage_comm_sizes.at(dim) *= new_comm_group.size();
+      stage_comm_sizes.at(par_stream) *= new_comm_group.size();
       // If we don't have any communication in original comm_group within the
       // current dimension, just leave it
       if (new_comm_group.size() > 1) {
         ASSIGN_OR_RETURN(auto allgather_stage, Instruction::Create(
             Opcode::kAllGather,
-            absl::StrCat(name_prefix, "_stage-", stage, "_dim-", dim),
+            absl::StrCat(name_prefix, "_stream-", par_stream, "_stage-", stage),
             allgather_sub_ptr));
         allgather_stage->AppendCommunicationGroup(new_comm_group);
-        allgather_stage->SetBytesOut(stage_comm_sizes.at(dim));
-        if (previous_instruction != nullptr) {
-          allgather_stage->AddOperand(previous_instruction);
+        allgather_stage->SetBytesOut(stage_comm_sizes.at(par_stream));
+        if (previous_instructions.at(par_stream) != nullptr) {
+          allgather_stage->AddOperand(previous_instructions.at(par_stream));
         }
         RETURN_IF_ERROR(allgather_translator_->Translate(allgather_stage));
-        parallel_allgather.push_back(allgather_stage);
+        previous_instructions.at(par_stream) = allgather_stage;
       }
-    }
-    ASSIGN_OR_RETURN(auto allgather_root, Instruction::Create(
-        Opcode::kNull,
-        absl::StrCat(name_prefix, "_stage-", stage, "_root"),
-        allgather_sub_ptr));
-    previous_instruction = allgather_root;
-    for (auto& instr : parallel_allgather) {
-      allgather_root->AddOperand(instr);
     }
   }
   // Check if we have non-trivial concentration and need to perform
   // explicit local exchange step
-  if ((concentration_ > 1) && !integrated_local_exchange_) {
+  if (conc_step) {
+    auto local_comm_group = CommunicationGroupProjectionOnDimensions(
+        {0}, processor_id, comm_group,
+        dimension_sizes_, concentration_);
     if (local_comm_group.size() > 1) {
       ASSIGN_OR_RETURN(auto allgather_conc, Instruction::Create(
           Opcode::kAllGather,
           absl::StrCat(name_prefix,
                        "_conc"),
-          allgather_sub_ptr));
+          allgather_sub_ptr,
+          true));
       allgather_conc->AppendCommunicationGroup(local_comm_group);
       allgather_conc->SetBytesOut(comm_size);
-      if (previous_instruction != nullptr) {
-        allgather_conc->AddOperand(previous_instruction);
+      for (auto& instr : previous_instructions) {
+        if (instr != nullptr) {
+          allgather_conc->AddOperand(instr);
+        }
       }
       RETURN_IF_ERROR(allgather_translator_->Translate(allgather_conc));
-      previous_instruction = allgather_conc;
+    }
+  } else {
+    ASSIGN_OR_RETURN(auto allgather_root, Instruction::Create(
+        Opcode::kNull,
+        absl::StrCat(name_prefix, "_root"),
+        allgather_sub_ptr,
+        true));
+    for (auto& instr : previous_instructions) {
+      if (instr != nullptr) {
+        allgather_root->AddOperand(instr);
+      }
     }
   }
-  // Set root instruction for allgather subroutine
-  RETURN_IF_ERROR(allgather_subroutine->SetRootInstruction(
-      previous_instruction));
   return allgather_subroutine;
 }
 

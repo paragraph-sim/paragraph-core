@@ -31,7 +31,7 @@ paragraph::InstructionProto no_barrier_test_proto() {
 name: "all-gather"
 opcode: "all-gather"
 instruction_id: 2
-bytes_out: 80
+bytes_out: 160
 communication_groups {
   group_ids: 0
   group_ids: 1
@@ -44,161 +44,108 @@ communication_groups {
 }
 inner_subroutines {
   name: "all-gather_torus-2d"
-  subroutine_root_id: 45
+  subroutine_root_id: 36
   execution_probability: 1
   execution_count: 1
   instructions {
-    name: "all-gather_stage-0_dim-0"
+    name: "all-gather_stream-0_stage-0"
     opcode: "all-gather"
     instruction_id: 4
-    bytes_out: 40
+    bytes_out: 20
     communication_groups {
-      group_ids: 0
       group_ids: 1
-      group_ids: 2
       group_ids: 3
     }
     inner_subroutines {
-      name: "all-gather_stage-0_dim-0_bidir-ring"
-      subroutine_root_id: 13
+      name: "all-gather_stream-0_stage-0_bidir-ring"
+      subroutine_root_id: 9
       execution_probability: 1
       execution_count: 1
       instructions {
-        name: "all-gather_stage-0_dim-0_bidir-ring_cw"
+        name: "all-gather_stream-0_stage-0_bidir-ring_cw"
         opcode: "all-gather"
         instruction_id: 5
-        bytes_out: 20
+        bytes_out: 10
         communication_groups {
-          group_ids: 0
           group_ids: 1
-          group_ids: 2
           group_ids: 3
         }
         inner_subroutines {
-          name: "all-gather_stage-0_dim-0_bidir-ring_cw_unidir-ring"
-          subroutine_root_id: 8
+          name: "all-gather_stream-0_stage-0_bidir-ring_cw_unidir-ring"
+          subroutine_root_id: 6
           execution_probability: 1
           execution_count: 1
           instructions {
-            name: "all-gather_stage-0_dim-0_bidir-ring_cw_unidir-ring_sendrecv_1"
+            name: "all-gather_stream-0_stage-0_bidir-ring_cw_unidir-ring_sendrecv_1"
             opcode: "sendrecv"
             instruction_id: 6
             bytes_in: 5
             bytes_out: 5
             communication_groups {
-              group_ids: 0
-              group_ids: 2
+              group_ids: 3
+              group_ids: 3
             }
           }
+        }
+      }
+      instructions {
+        name: "all-gather_stream-0_stage-0_bidir-ring_ccw"
+        opcode: "all-gather"
+        instruction_id: 7
+        bytes_out: 10
+        communication_groups {
+          group_ids: 3
+          group_ids: 1
+        }
+        inner_subroutines {
+          name: "all-gather_stream-0_stage-0_bidir-ring_ccw_unidir-ring"
+          subroutine_root_id: 8
+          execution_probability: 1
+          execution_count: 1
           instructions {
-            name: "all-gather_stage-0_dim-0_bidir-ring_cw_unidir-ring_sendrecv_2"
-            opcode: "sendrecv"
-            instruction_id: 7
-            bytes_in: 5
-            bytes_out: 5
-            communication_groups {
-              group_ids: 0
-              group_ids: 2
-            }
-            operand_ids: 6
-          }
-          instructions {
-            name: "all-gather_stage-0_dim-0_bidir-ring_cw_unidir-ring_sendrecv_3"
+            name: "all-gather_stream-0_stage-0_bidir-ring_ccw_unidir-ring_sendrecv_1"
             opcode: "sendrecv"
             instruction_id: 8
             bytes_in: 5
             bytes_out: 5
             communication_groups {
-              group_ids: 0
-              group_ids: 2
+              group_ids: 3
+              group_ids: 3
             }
-            operand_ids: 7
           }
         }
       }
       instructions {
-        name: "all-gather_stage-0_dim-0_bidir-ring_ccw"
-        opcode: "all-gather"
-        instruction_id: 9
-        bytes_out: 20
-        communication_groups {
-          group_ids: 3
-          group_ids: 2
-          group_ids: 1
-          group_ids: 0
-        }
-        inner_subroutines {
-          name: "all-gather_stage-0_dim-0_bidir-ring_ccw_unidir-ring"
-          subroutine_root_id: 12
-          execution_probability: 1
-          execution_count: 1
-          instructions {
-            name: "all-gather_stage-0_dim-0_bidir-ring_ccw_unidir-ring_sendrecv_1"
-            opcode: "sendrecv"
-            instruction_id: 10
-            bytes_in: 5
-            bytes_out: 5
-            communication_groups {
-              group_ids: 2
-              group_ids: 0
-            }
-          }
-          instructions {
-            name: "all-gather_stage-0_dim-0_bidir-ring_ccw_unidir-ring_sendrecv_2"
-            opcode: "sendrecv"
-            instruction_id: 11
-            bytes_in: 5
-            bytes_out: 5
-            communication_groups {
-              group_ids: 2
-              group_ids: 0
-            }
-            operand_ids: 10
-          }
-          instructions {
-            name: "all-gather_stage-0_dim-0_bidir-ring_ccw_unidir-ring_sendrecv_3"
-            opcode: "sendrecv"
-            instruction_id: 12
-            bytes_in: 5
-            bytes_out: 5
-            communication_groups {
-              group_ids: 2
-              group_ids: 0
-            }
-            operand_ids: 11
-          }
-        }
-      }
-      instructions {
-        name: "all-gather_stage-0_dim-0_bidir-ring_root_1"
+        name: "all-gather_stream-0_stage-0_bidir-ring_root_1"
         opcode: "null"
-        instruction_id: 13
+        instruction_id: 9
         operand_ids: 5
-        operand_ids: 9
+        operand_ids: 7
       }
     }
   }
   instructions {
-    name: "all-gather_stage-0_dim-1"
+    name: "all-gather_stream-0_stage-1"
     opcode: "all-gather"
-    instruction_id: 14
-    bytes_out: 40
+    instruction_id: 10
+    bytes_out: 80
     communication_groups {
       group_ids: 0
       group_ids: 1
       group_ids: 4
       group_ids: 5
     }
+    operand_ids: 4
     inner_subroutines {
-      name: "all-gather_stage-0_dim-1_bidir-ring"
-      subroutine_root_id: 23
+      name: "all-gather_stream-0_stage-1_bidir-ring"
+      subroutine_root_id: 19
       execution_probability: 1
       execution_count: 1
       instructions {
-        name: "all-gather_stage-0_dim-1_bidir-ring_cw"
+        name: "all-gather_stream-0_stage-1_bidir-ring_cw"
         opcode: "all-gather"
-        instruction_id: 15
-        bytes_out: 20
+        instruction_id: 11
+        bytes_out: 40
         communication_groups {
           group_ids: 0
           group_ids: 1
@@ -206,120 +153,190 @@ inner_subroutines {
           group_ids: 5
         }
         inner_subroutines {
-          name: "all-gather_stage-0_dim-1_bidir-ring_cw_unidir-ring"
+          name: "all-gather_stream-0_stage-1_bidir-ring_cw_unidir-ring"
+          subroutine_root_id: 14
+          execution_probability: 1
+          execution_count: 1
+          instructions {
+            name: "all-gather_stream-0_stage-1_bidir-ring_cw_unidir-ring_sendrecv_1"
+            opcode: "sendrecv"
+            instruction_id: 12
+            bytes_in: 10
+            bytes_out: 10
+            communication_groups {
+              group_ids: 0
+              group_ids: 4
+            }
+          }
+          instructions {
+            name: "all-gather_stream-0_stage-1_bidir-ring_cw_unidir-ring_sendrecv_2"
+            opcode: "sendrecv"
+            instruction_id: 13
+            bytes_in: 10
+            bytes_out: 10
+            communication_groups {
+              group_ids: 0
+              group_ids: 4
+            }
+            operand_ids: 12
+          }
+          instructions {
+            name: "all-gather_stream-0_stage-1_bidir-ring_cw_unidir-ring_sendrecv_3"
+            opcode: "sendrecv"
+            instruction_id: 14
+            bytes_in: 10
+            bytes_out: 10
+            communication_groups {
+              group_ids: 0
+              group_ids: 4
+            }
+            operand_ids: 13
+          }
+        }
+      }
+      instructions {
+        name: "all-gather_stream-0_stage-1_bidir-ring_ccw"
+        opcode: "all-gather"
+        instruction_id: 15
+        bytes_out: 40
+        communication_groups {
+          group_ids: 5
+          group_ids: 4
+          group_ids: 1
+          group_ids: 0
+        }
+        inner_subroutines {
+          name: "all-gather_stream-0_stage-1_bidir-ring_ccw_unidir-ring"
           subroutine_root_id: 18
           execution_probability: 1
           execution_count: 1
           instructions {
-            name: "all-gather_stage-0_dim-1_bidir-ring_cw_unidir-ring_sendrecv_1"
+            name: "all-gather_stream-0_stage-1_bidir-ring_ccw_unidir-ring_sendrecv_1"
             opcode: "sendrecv"
             instruction_id: 16
-            bytes_in: 5
-            bytes_out: 5
+            bytes_in: 10
+            bytes_out: 10
             communication_groups {
-              group_ids: 0
               group_ids: 4
+              group_ids: 0
             }
           }
           instructions {
-            name: "all-gather_stage-0_dim-1_bidir-ring_cw_unidir-ring_sendrecv_2"
+            name: "all-gather_stream-0_stage-1_bidir-ring_ccw_unidir-ring_sendrecv_2"
             opcode: "sendrecv"
             instruction_id: 17
-            bytes_in: 5
-            bytes_out: 5
+            bytes_in: 10
+            bytes_out: 10
             communication_groups {
-              group_ids: 0
               group_ids: 4
+              group_ids: 0
             }
             operand_ids: 16
           }
           instructions {
-            name: "all-gather_stage-0_dim-1_bidir-ring_cw_unidir-ring_sendrecv_3"
+            name: "all-gather_stream-0_stage-1_bidir-ring_ccw_unidir-ring_sendrecv_3"
             opcode: "sendrecv"
             instruction_id: 18
-            bytes_in: 5
-            bytes_out: 5
+            bytes_in: 10
+            bytes_out: 10
             communication_groups {
-              group_ids: 0
               group_ids: 4
+              group_ids: 0
             }
             operand_ids: 17
           }
         }
       }
       instructions {
-        name: "all-gather_stage-0_dim-1_bidir-ring_ccw"
-        opcode: "all-gather"
+        name: "all-gather_stream-0_stage-1_bidir-ring_root_1"
+        opcode: "null"
         instruction_id: 19
-        bytes_out: 20
+        operand_ids: 11
+        operand_ids: 15
+      }
+    }
+  }
+  instructions {
+    name: "all-gather_stream-1_stage-0"
+    opcode: "all-gather"
+    instruction_id: 20
+    bytes_out: 20
+    communication_groups {
+      group_ids: 1
+      group_ids: 5
+    }
+    inner_subroutines {
+      name: "all-gather_stream-1_stage-0_bidir-ring"
+      subroutine_root_id: 25
+      execution_probability: 1
+      execution_count: 1
+      instructions {
+        name: "all-gather_stream-1_stage-0_bidir-ring_cw"
+        opcode: "all-gather"
+        instruction_id: 21
+        bytes_out: 10
         communication_groups {
-          group_ids: 5
-          group_ids: 4
           group_ids: 1
-          group_ids: 0
+          group_ids: 5
         }
         inner_subroutines {
-          name: "all-gather_stage-0_dim-1_bidir-ring_ccw_unidir-ring"
+          name: "all-gather_stream-1_stage-0_bidir-ring_cw_unidir-ring"
           subroutine_root_id: 22
           execution_probability: 1
           execution_count: 1
           instructions {
-            name: "all-gather_stage-0_dim-1_bidir-ring_ccw_unidir-ring_sendrecv_1"
-            opcode: "sendrecv"
-            instruction_id: 20
-            bytes_in: 5
-            bytes_out: 5
-            communication_groups {
-              group_ids: 4
-              group_ids: 0
-            }
-          }
-          instructions {
-            name: "all-gather_stage-0_dim-1_bidir-ring_ccw_unidir-ring_sendrecv_2"
-            opcode: "sendrecv"
-            instruction_id: 21
-            bytes_in: 5
-            bytes_out: 5
-            communication_groups {
-              group_ids: 4
-              group_ids: 0
-            }
-            operand_ids: 20
-          }
-          instructions {
-            name: "all-gather_stage-0_dim-1_bidir-ring_ccw_unidir-ring_sendrecv_3"
+            name: "all-gather_stream-1_stage-0_bidir-ring_cw_unidir-ring_sendrecv_1"
             opcode: "sendrecv"
             instruction_id: 22
             bytes_in: 5
             bytes_out: 5
             communication_groups {
-              group_ids: 4
-              group_ids: 0
+              group_ids: 5
+              group_ids: 5
             }
-            operand_ids: 21
           }
         }
       }
       instructions {
-        name: "all-gather_stage-0_dim-1_bidir-ring_root_1"
-        opcode: "null"
+        name: "all-gather_stream-1_stage-0_bidir-ring_ccw"
+        opcode: "all-gather"
         instruction_id: 23
-        operand_ids: 15
-        operand_ids: 19
+        bytes_out: 10
+        communication_groups {
+          group_ids: 5
+          group_ids: 1
+        }
+        inner_subroutines {
+          name: "all-gather_stream-1_stage-0_bidir-ring_ccw_unidir-ring"
+          subroutine_root_id: 24
+          execution_probability: 1
+          execution_count: 1
+          instructions {
+            name: "all-gather_stream-1_stage-0_bidir-ring_ccw_unidir-ring_sendrecv_1"
+            opcode: "sendrecv"
+            instruction_id: 24
+            bytes_in: 5
+            bytes_out: 5
+            communication_groups {
+              group_ids: 5
+              group_ids: 5
+            }
+          }
+        }
+      }
+      instructions {
+        name: "all-gather_stream-1_stage-0_bidir-ring_root_1"
+        opcode: "null"
+        instruction_id: 25
+        operand_ids: 21
+        operand_ids: 23
       }
     }
   }
   instructions {
-    name: "all-gather_stage-0_root"
-    opcode: "null"
-    instruction_id: 24
-    operand_ids: 4
-    operand_ids: 14
-  }
-  instructions {
-    name: "all-gather_stage-1_dim-0"
+    name: "all-gather_stream-1_stage-1"
     opcode: "all-gather"
-    instruction_id: 25
+    instruction_id: 26
     bytes_out: 80
     communication_groups {
       group_ids: 0
@@ -327,16 +344,16 @@ inner_subroutines {
       group_ids: 2
       group_ids: 3
     }
-    operand_ids: 24
+    operand_ids: 20
     inner_subroutines {
-      name: "all-gather_stage-1_dim-0_bidir-ring"
-      subroutine_root_id: 34
+      name: "all-gather_stream-1_stage-1_bidir-ring"
+      subroutine_root_id: 35
       execution_probability: 1
       execution_count: 1
       instructions {
-        name: "all-gather_stage-1_dim-0_bidir-ring_cw"
+        name: "all-gather_stream-1_stage-1_bidir-ring_cw"
         opcode: "all-gather"
-        instruction_id: 26
+        instruction_id: 27
         bytes_out: 40
         communication_groups {
           group_ids: 0
@@ -345,23 +362,12 @@ inner_subroutines {
           group_ids: 3
         }
         inner_subroutines {
-          name: "all-gather_stage-1_dim-0_bidir-ring_cw_unidir-ring"
-          subroutine_root_id: 29
+          name: "all-gather_stream-1_stage-1_bidir-ring_cw_unidir-ring"
+          subroutine_root_id: 30
           execution_probability: 1
           execution_count: 1
           instructions {
-            name: "all-gather_stage-1_dim-0_bidir-ring_cw_unidir-ring_sendrecv_1"
-            opcode: "sendrecv"
-            instruction_id: 27
-            bytes_in: 10
-            bytes_out: 10
-            communication_groups {
-              group_ids: 0
-              group_ids: 2
-            }
-          }
-          instructions {
-            name: "all-gather_stage-1_dim-0_bidir-ring_cw_unidir-ring_sendrecv_2"
+            name: "all-gather_stream-1_stage-1_bidir-ring_cw_unidir-ring_sendrecv_1"
             opcode: "sendrecv"
             instruction_id: 28
             bytes_in: 10
@@ -370,10 +376,9 @@ inner_subroutines {
               group_ids: 0
               group_ids: 2
             }
-            operand_ids: 27
           }
           instructions {
-            name: "all-gather_stage-1_dim-0_bidir-ring_cw_unidir-ring_sendrecv_3"
+            name: "all-gather_stream-1_stage-1_bidir-ring_cw_unidir-ring_sendrecv_2"
             opcode: "sendrecv"
             instruction_id: 29
             bytes_in: 10
@@ -384,12 +389,24 @@ inner_subroutines {
             }
             operand_ids: 28
           }
+          instructions {
+            name: "all-gather_stream-1_stage-1_bidir-ring_cw_unidir-ring_sendrecv_3"
+            opcode: "sendrecv"
+            instruction_id: 30
+            bytes_in: 10
+            bytes_out: 10
+            communication_groups {
+              group_ids: 0
+              group_ids: 2
+            }
+            operand_ids: 29
+          }
         }
       }
       instructions {
-        name: "all-gather_stage-1_dim-0_bidir-ring_ccw"
+        name: "all-gather_stream-1_stage-1_bidir-ring_ccw"
         opcode: "all-gather"
-        instruction_id: 30
+        instruction_id: 31
         bytes_out: 40
         communication_groups {
           group_ids: 3
@@ -398,23 +415,12 @@ inner_subroutines {
           group_ids: 0
         }
         inner_subroutines {
-          name: "all-gather_stage-1_dim-0_bidir-ring_ccw_unidir-ring"
-          subroutine_root_id: 33
+          name: "all-gather_stream-1_stage-1_bidir-ring_ccw_unidir-ring"
+          subroutine_root_id: 34
           execution_probability: 1
           execution_count: 1
           instructions {
-            name: "all-gather_stage-1_dim-0_bidir-ring_ccw_unidir-ring_sendrecv_1"
-            opcode: "sendrecv"
-            instruction_id: 31
-            bytes_in: 10
-            bytes_out: 10
-            communication_groups {
-              group_ids: 2
-              group_ids: 0
-            }
-          }
-          instructions {
-            name: "all-gather_stage-1_dim-0_bidir-ring_ccw_unidir-ring_sendrecv_2"
+            name: "all-gather_stream-1_stage-1_bidir-ring_ccw_unidir-ring_sendrecv_1"
             opcode: "sendrecv"
             instruction_id: 32
             bytes_in: 10
@@ -423,10 +429,9 @@ inner_subroutines {
               group_ids: 2
               group_ids: 0
             }
-            operand_ids: 31
           }
           instructions {
-            name: "all-gather_stage-1_dim-0_bidir-ring_ccw_unidir-ring_sendrecv_3"
+            name: "all-gather_stream-1_stage-1_bidir-ring_ccw_unidir-ring_sendrecv_2"
             opcode: "sendrecv"
             instruction_id: 33
             bytes_in: 10
@@ -437,158 +442,38 @@ inner_subroutines {
             }
             operand_ids: 32
           }
+          instructions {
+            name: "all-gather_stream-1_stage-1_bidir-ring_ccw_unidir-ring_sendrecv_3"
+            opcode: "sendrecv"
+            instruction_id: 34
+            bytes_in: 10
+            bytes_out: 10
+            communication_groups {
+              group_ids: 2
+              group_ids: 0
+            }
+            operand_ids: 33
+          }
         }
       }
       instructions {
-        name: "all-gather_stage-1_dim-0_bidir-ring_root_1"
+        name: "all-gather_stream-1_stage-1_bidir-ring_root_1"
         opcode: "null"
-        instruction_id: 34
-        operand_ids: 26
-        operand_ids: 30
+        instruction_id: 35
+        operand_ids: 27
+        operand_ids: 31
       }
     }
   }
   instructions {
-    name: "all-gather_stage-1_dim-1"
-    opcode: "all-gather"
-    instruction_id: 35
-    bytes_out: 80
-    communication_groups {
-      group_ids: 0
-      group_ids: 1
-      group_ids: 4
-      group_ids: 5
-    }
-    operand_ids: 24
-    inner_subroutines {
-      name: "all-gather_stage-1_dim-1_bidir-ring"
-      subroutine_root_id: 44
-      execution_probability: 1
-      execution_count: 1
-      instructions {
-        name: "all-gather_stage-1_dim-1_bidir-ring_cw"
-        opcode: "all-gather"
-        instruction_id: 36
-        bytes_out: 40
-        communication_groups {
-          group_ids: 0
-          group_ids: 1
-          group_ids: 4
-          group_ids: 5
-        }
-        inner_subroutines {
-          name: "all-gather_stage-1_dim-1_bidir-ring_cw_unidir-ring"
-          subroutine_root_id: 39
-          execution_probability: 1
-          execution_count: 1
-          instructions {
-            name: "all-gather_stage-1_dim-1_bidir-ring_cw_unidir-ring_sendrecv_1"
-            opcode: "sendrecv"
-            instruction_id: 37
-            bytes_in: 10
-            bytes_out: 10
-            communication_groups {
-              group_ids: 0
-              group_ids: 4
-            }
-          }
-          instructions {
-            name: "all-gather_stage-1_dim-1_bidir-ring_cw_unidir-ring_sendrecv_2"
-            opcode: "sendrecv"
-            instruction_id: 38
-            bytes_in: 10
-            bytes_out: 10
-            communication_groups {
-              group_ids: 0
-              group_ids: 4
-            }
-            operand_ids: 37
-          }
-          instructions {
-            name: "all-gather_stage-1_dim-1_bidir-ring_cw_unidir-ring_sendrecv_3"
-            opcode: "sendrecv"
-            instruction_id: 39
-            bytes_in: 10
-            bytes_out: 10
-            communication_groups {
-              group_ids: 0
-              group_ids: 4
-            }
-            operand_ids: 38
-          }
-        }
-      }
-      instructions {
-        name: "all-gather_stage-1_dim-1_bidir-ring_ccw"
-        opcode: "all-gather"
-        instruction_id: 40
-        bytes_out: 40
-        communication_groups {
-          group_ids: 5
-          group_ids: 4
-          group_ids: 1
-          group_ids: 0
-        }
-        inner_subroutines {
-          name: "all-gather_stage-1_dim-1_bidir-ring_ccw_unidir-ring"
-          subroutine_root_id: 43
-          execution_probability: 1
-          execution_count: 1
-          instructions {
-            name: "all-gather_stage-1_dim-1_bidir-ring_ccw_unidir-ring_sendrecv_1"
-            opcode: "sendrecv"
-            instruction_id: 41
-            bytes_in: 10
-            bytes_out: 10
-            communication_groups {
-              group_ids: 4
-              group_ids: 0
-            }
-          }
-          instructions {
-            name: "all-gather_stage-1_dim-1_bidir-ring_ccw_unidir-ring_sendrecv_2"
-            opcode: "sendrecv"
-            instruction_id: 42
-            bytes_in: 10
-            bytes_out: 10
-            communication_groups {
-              group_ids: 4
-              group_ids: 0
-            }
-            operand_ids: 41
-          }
-          instructions {
-            name: "all-gather_stage-1_dim-1_bidir-ring_ccw_unidir-ring_sendrecv_3"
-            opcode: "sendrecv"
-            instruction_id: 43
-            bytes_in: 10
-            bytes_out: 10
-            communication_groups {
-              group_ids: 4
-              group_ids: 0
-            }
-            operand_ids: 42
-          }
-        }
-      }
-      instructions {
-        name: "all-gather_stage-1_dim-1_bidir-ring_root_1"
-        opcode: "null"
-        instruction_id: 44
-        operand_ids: 36
-        operand_ids: 40
-      }
-    }
-  }
-  instructions {
-    name: "all-gather_stage-1_root"
+    name: "all-gather_root"
     opcode: "null"
-    instruction_id: 45
-    operand_ids: 25
-    operand_ids: 35
+    instruction_id: 36
+    operand_ids: 10
+    operand_ids: 26
   }
 }
-    )proto";
+      )proto";
   google::protobuf::TextFormat::ParseFromString(test_str,
                                                 &proto);
   return proto;
@@ -609,7 +494,7 @@ TEST(Torus2dAllGather, NoBarrier) {
   ASSERT_OK_AND_ASSIGN(auto allgather,
                        paragraph::Instruction::Create(
       paragraph::Opcode::kAllGather, "all-gather", sub_ptr));
-  allgather->SetBytesOut(80);
+  allgather->SetBytesOut(160);
   paragraph::CommunicationGroup allgather_group = {0, 1, 2, 3, 4, 5, 6, 7};
   allgather->AppendCommunicationGroup(allgather_group);
 
@@ -644,7 +529,7 @@ paragraph::InstructionProto with_barrier_test_proto() {
 name: "all-gather"
 opcode: "all-gather"
 instruction_id: 2
-bytes_out: 80
+bytes_out: 160
 communication_groups {
   group_ids: 0
   group_ids: 1
@@ -657,11 +542,11 @@ communication_groups {
 }
 inner_subroutines {
   name: "all-gather_torus-2d"
-  subroutine_root_id: 44
+  subroutine_root_id: 42
   execution_probability: 1
   execution_count: 1
   instructions {
-    name: "all-gather_stage-0_dim-0"
+    name: "all-gather_stream-0_stage-0"
     opcode: "all-gather"
     instruction_id: 4
     bytes_out: 20
@@ -670,12 +555,12 @@ inner_subroutines {
       group_ids: 2
     }
     inner_subroutines {
-      name: "all-gather_stage-0_dim-0_bidir-ring"
+      name: "all-gather_stream-0_stage-0_bidir-ring"
       subroutine_root_id: 12
       execution_probability: 1
       execution_count: 1
       instructions {
-        name: "all-gather_stage-0_dim-0_bidir-ring_barrier"
+        name: "all-gather_stream-0_stage-0_bidir-ring_barrier"
         opcode: "barrier"
         instruction_id: 5
         communication_groups {
@@ -683,12 +568,12 @@ inner_subroutines {
           group_ids: 2
         }
         inner_subroutines {
-          name: "all-gather_stage-0_dim-0_bidir-ring_barrier_centralized"
+          name: "all-gather_stream-0_stage-0_bidir-ring_barrier_centralized"
           subroutine_root_id: 7
           execution_probability: 1
           execution_count: 1
           instructions {
-            name: "all-gather_stage-0_dim-0_bidir-ring_barrier_centralized_send_to_0"
+            name: "all-gather_stream-0_stage-0_bidir-ring_barrier_centralized_send_to_0"
             opcode: "send"
             instruction_id: 6
             communication_groups {
@@ -696,7 +581,7 @@ inner_subroutines {
             }
           }
           instructions {
-            name: "all-gather_stage-0_dim-0_bidir-ring_barrier_centralized_recv_from_0"
+            name: "all-gather_stream-0_stage-0_bidir-ring_barrier_centralized_recv_from_0"
             opcode: "recv"
             instruction_id: 7
             communication_groups {
@@ -707,7 +592,7 @@ inner_subroutines {
         }
       }
       instructions {
-        name: "all-gather_stage-0_dim-0_bidir-ring_cw"
+        name: "all-gather_stream-0_stage-0_bidir-ring_cw"
         opcode: "all-gather"
         instruction_id: 8
         bytes_out: 10
@@ -717,12 +602,12 @@ inner_subroutines {
         }
         operand_ids: 5
         inner_subroutines {
-          name: "all-gather_stage-0_dim-0_bidir-ring_cw_unidir-ring"
+          name: "all-gather_stream-0_stage-0_bidir-ring_cw_unidir-ring"
           subroutine_root_id: 9
           execution_probability: 1
           execution_count: 1
           instructions {
-            name: "all-gather_stage-0_dim-0_bidir-ring_cw_unidir-ring_sendrecv_1"
+            name: "all-gather_stream-0_stage-0_bidir-ring_cw_unidir-ring_sendrecv_1"
             opcode: "sendrecv"
             instruction_id: 9
             bytes_in: 5
@@ -735,7 +620,7 @@ inner_subroutines {
         }
       }
       instructions {
-        name: "all-gather_stage-0_dim-0_bidir-ring_ccw"
+        name: "all-gather_stream-0_stage-0_bidir-ring_ccw"
         opcode: "all-gather"
         instruction_id: 10
         bytes_out: 10
@@ -745,12 +630,12 @@ inner_subroutines {
         }
         operand_ids: 5
         inner_subroutines {
-          name: "all-gather_stage-0_dim-0_bidir-ring_ccw_unidir-ring"
+          name: "all-gather_stream-0_stage-0_bidir-ring_ccw_unidir-ring"
           subroutine_root_id: 11
           execution_probability: 1
           execution_count: 1
           instructions {
-            name: "all-gather_stage-0_dim-0_bidir-ring_ccw_unidir-ring_sendrecv_1"
+            name: "all-gather_stream-0_stage-0_bidir-ring_ccw_unidir-ring_sendrecv_1"
             opcode: "sendrecv"
             instruction_id: 11
             bytes_in: 5
@@ -763,7 +648,7 @@ inner_subroutines {
         }
       }
       instructions {
-        name: "all-gather_stage-0_dim-0_bidir-ring_root_2"
+        name: "all-gather_stream-0_stage-0_bidir-ring_root_2"
         opcode: "null"
         instruction_id: 12
         operand_ids: 8
@@ -772,21 +657,22 @@ inner_subroutines {
     }
   }
   instructions {
-    name: "all-gather_stage-0_dim-1"
+    name: "all-gather_stream-0_stage-1"
     opcode: "all-gather"
     instruction_id: 13
-    bytes_out: 20
+    bytes_out: 40
     communication_groups {
       group_ids: 2
       group_ids: 6
     }
+    operand_ids: 4
     inner_subroutines {
-      name: "all-gather_stage-0_dim-1_bidir-ring"
+      name: "all-gather_stream-0_stage-1_bidir-ring"
       subroutine_root_id: 22
       execution_probability: 1
       execution_count: 1
       instructions {
-        name: "all-gather_stage-0_dim-1_bidir-ring_barrier"
+        name: "all-gather_stream-0_stage-1_bidir-ring_barrier"
         opcode: "barrier"
         instruction_id: 14
         communication_groups {
@@ -794,12 +680,12 @@ inner_subroutines {
           group_ids: 6
         }
         inner_subroutines {
-          name: "all-gather_stage-0_dim-1_bidir-ring_barrier_centralized"
+          name: "all-gather_stream-0_stage-1_bidir-ring_barrier_centralized"
           subroutine_root_id: 17
           execution_probability: 1
           execution_count: 1
           instructions {
-            name: "all-gather_stage-0_dim-1_bidir-ring_barrier_centralized_coordinator_recv_from_6"
+            name: "all-gather_stream-0_stage-1_bidir-ring_barrier_centralized_coordinator_recv_from_6"
             opcode: "recv"
             instruction_id: 15
             communication_groups {
@@ -807,7 +693,7 @@ inner_subroutines {
             }
           }
           instructions {
-            name: "all-gather_stage-0_dim-1_bidir-ring_barrier_centralized_coordinator_send_to_6"
+            name: "all-gather_stream-0_stage-1_bidir-ring_barrier_centralized_coordinator_send_to_6"
             opcode: "send"
             instruction_id: 16
             communication_groups {
@@ -816,7 +702,7 @@ inner_subroutines {
             operand_ids: 15
           }
           instructions {
-            name: "all-gather_stage-0_dim-1_bidir-ring_barrier_centralized_root_2"
+            name: "all-gather_stream-0_stage-1_bidir-ring_barrier_centralized_root_2"
             opcode: "null"
             instruction_id: 17
             operand_ids: 16
@@ -824,26 +710,26 @@ inner_subroutines {
         }
       }
       instructions {
-        name: "all-gather_stage-0_dim-1_bidir-ring_cw"
+        name: "all-gather_stream-0_stage-1_bidir-ring_cw"
         opcode: "all-gather"
         instruction_id: 18
-        bytes_out: 10
+        bytes_out: 20
         communication_groups {
           group_ids: 2
           group_ids: 6
         }
         operand_ids: 14
         inner_subroutines {
-          name: "all-gather_stage-0_dim-1_bidir-ring_cw_unidir-ring"
+          name: "all-gather_stream-0_stage-1_bidir-ring_cw_unidir-ring"
           subroutine_root_id: 19
           execution_probability: 1
           execution_count: 1
           instructions {
-            name: "all-gather_stage-0_dim-1_bidir-ring_cw_unidir-ring_sendrecv_1"
+            name: "all-gather_stream-0_stage-1_bidir-ring_cw_unidir-ring_sendrecv_1"
             opcode: "sendrecv"
             instruction_id: 19
-            bytes_in: 5
-            bytes_out: 5
+            bytes_in: 10
+            bytes_out: 10
             communication_groups {
               group_ids: 6
               group_ids: 6
@@ -852,26 +738,26 @@ inner_subroutines {
         }
       }
       instructions {
-        name: "all-gather_stage-0_dim-1_bidir-ring_ccw"
+        name: "all-gather_stream-0_stage-1_bidir-ring_ccw"
         opcode: "all-gather"
         instruction_id: 20
-        bytes_out: 10
+        bytes_out: 20
         communication_groups {
           group_ids: 6
           group_ids: 2
         }
         operand_ids: 14
         inner_subroutines {
-          name: "all-gather_stage-0_dim-1_bidir-ring_ccw_unidir-ring"
+          name: "all-gather_stream-0_stage-1_bidir-ring_ccw_unidir-ring"
           subroutine_root_id: 21
           execution_probability: 1
           execution_count: 1
           instructions {
-            name: "all-gather_stage-0_dim-1_bidir-ring_ccw_unidir-ring_sendrecv_1"
+            name: "all-gather_stream-0_stage-1_bidir-ring_ccw_unidir-ring_sendrecv_1"
             opcode: "sendrecv"
             instruction_id: 21
-            bytes_in: 5
-            bytes_out: 5
+            bytes_in: 10
+            bytes_out: 10
             communication_groups {
               group_ids: 6
               group_ids: 6
@@ -880,7 +766,7 @@ inner_subroutines {
         }
       }
       instructions {
-        name: "all-gather_stage-0_dim-1_bidir-ring_root_2"
+        name: "all-gather_stream-0_stage-1_bidir-ring_root_2"
         opcode: "null"
         instruction_id: 22
         operand_ids: 18
@@ -889,117 +775,115 @@ inner_subroutines {
     }
   }
   instructions {
-    name: "all-gather_stage-0_root"
-    opcode: "null"
-    instruction_id: 23
-    operand_ids: 4
-    operand_ids: 13
-  }
-  instructions {
-    name: "all-gather_stage-1_dim-0"
+    name: "all-gather_stream-1_stage-0"
     opcode: "all-gather"
-    instruction_id: 24
-    bytes_out: 40
+    instruction_id: 23
+    bytes_out: 20
     communication_groups {
-      group_ids: 0
       group_ids: 2
+      group_ids: 6
     }
-    operand_ids: 23
     inner_subroutines {
-      name: "all-gather_stage-1_dim-0_bidir-ring"
+      name: "all-gather_stream-1_stage-0_bidir-ring"
       subroutine_root_id: 32
       execution_probability: 1
       execution_count: 1
       instructions {
-        name: "all-gather_stage-1_dim-0_bidir-ring_barrier"
+        name: "all-gather_stream-1_stage-0_bidir-ring_barrier"
         opcode: "barrier"
-        instruction_id: 25
+        instruction_id: 24
         communication_groups {
-          group_ids: 0
           group_ids: 2
+          group_ids: 6
         }
         inner_subroutines {
-          name: "all-gather_stage-1_dim-0_bidir-ring_barrier_centralized"
+          name: "all-gather_stream-1_stage-0_bidir-ring_barrier_centralized"
           subroutine_root_id: 27
           execution_probability: 1
           execution_count: 1
           instructions {
-            name: "all-gather_stage-1_dim-0_bidir-ring_barrier_centralized_send_to_0"
-            opcode: "send"
-            instruction_id: 26
+            name: "all-gather_stream-1_stage-0_bidir-ring_barrier_centralized_coordinator_recv_from_6"
+            opcode: "recv"
+            instruction_id: 25
             communication_groups {
-              group_ids: 0
+              group_ids: 6
             }
           }
           instructions {
-            name: "all-gather_stage-1_dim-0_bidir-ring_barrier_centralized_recv_from_0"
-            opcode: "recv"
-            instruction_id: 27
+            name: "all-gather_stream-1_stage-0_bidir-ring_barrier_centralized_coordinator_send_to_6"
+            opcode: "send"
+            instruction_id: 26
             communication_groups {
-              group_ids: 0
+              group_ids: 6
             }
+            operand_ids: 25
+          }
+          instructions {
+            name: "all-gather_stream-1_stage-0_bidir-ring_barrier_centralized_root_2"
+            opcode: "null"
+            instruction_id: 27
             operand_ids: 26
           }
         }
       }
       instructions {
-        name: "all-gather_stage-1_dim-0_bidir-ring_cw"
+        name: "all-gather_stream-1_stage-0_bidir-ring_cw"
         opcode: "all-gather"
         instruction_id: 28
-        bytes_out: 20
+        bytes_out: 10
         communication_groups {
-          group_ids: 0
           group_ids: 2
+          group_ids: 6
         }
-        operand_ids: 25
+        operand_ids: 24
         inner_subroutines {
-          name: "all-gather_stage-1_dim-0_bidir-ring_cw_unidir-ring"
+          name: "all-gather_stream-1_stage-0_bidir-ring_cw_unidir-ring"
           subroutine_root_id: 29
           execution_probability: 1
           execution_count: 1
           instructions {
-            name: "all-gather_stage-1_dim-0_bidir-ring_cw_unidir-ring_sendrecv_1"
+            name: "all-gather_stream-1_stage-0_bidir-ring_cw_unidir-ring_sendrecv_1"
             opcode: "sendrecv"
             instruction_id: 29
-            bytes_in: 10
-            bytes_out: 10
+            bytes_in: 5
+            bytes_out: 5
             communication_groups {
-              group_ids: 0
-              group_ids: 0
+              group_ids: 6
+              group_ids: 6
             }
           }
         }
       }
       instructions {
-        name: "all-gather_stage-1_dim-0_bidir-ring_ccw"
+        name: "all-gather_stream-1_stage-0_bidir-ring_ccw"
         opcode: "all-gather"
         instruction_id: 30
-        bytes_out: 20
+        bytes_out: 10
         communication_groups {
+          group_ids: 6
           group_ids: 2
-          group_ids: 0
         }
-        operand_ids: 25
+        operand_ids: 24
         inner_subroutines {
-          name: "all-gather_stage-1_dim-0_bidir-ring_ccw_unidir-ring"
+          name: "all-gather_stream-1_stage-0_bidir-ring_ccw_unidir-ring"
           subroutine_root_id: 31
           execution_probability: 1
           execution_count: 1
           instructions {
-            name: "all-gather_stage-1_dim-0_bidir-ring_ccw_unidir-ring_sendrecv_1"
+            name: "all-gather_stream-1_stage-0_bidir-ring_ccw_unidir-ring_sendrecv_1"
             opcode: "sendrecv"
             instruction_id: 31
-            bytes_in: 10
-            bytes_out: 10
+            bytes_in: 5
+            bytes_out: 5
             communication_groups {
-              group_ids: 0
-              group_ids: 0
+              group_ids: 6
+              group_ids: 6
             }
           }
         }
       }
       instructions {
-        name: "all-gather_stage-1_dim-0_bidir-ring_root_2"
+        name: "all-gather_stream-1_stage-0_bidir-ring_root_2"
         opcode: "null"
         instruction_id: 32
         operand_ids: 28
@@ -1008,162 +892,150 @@ inner_subroutines {
     }
   }
   instructions {
-    name: "all-gather_stage-1_dim-1"
+    name: "all-gather_stream-1_stage-1"
     opcode: "all-gather"
     instruction_id: 33
     bytes_out: 40
     communication_groups {
+      group_ids: 0
       group_ids: 2
-      group_ids: 6
     }
     operand_ids: 23
     inner_subroutines {
-      name: "all-gather_stage-1_dim-1_bidir-ring"
-      subroutine_root_id: 42
+      name: "all-gather_stream-1_stage-1_bidir-ring"
+      subroutine_root_id: 41
       execution_probability: 1
       execution_count: 1
       instructions {
-        name: "all-gather_stage-1_dim-1_bidir-ring_barrier"
+        name: "all-gather_stream-1_stage-1_bidir-ring_barrier"
         opcode: "barrier"
         instruction_id: 34
         communication_groups {
+          group_ids: 0
           group_ids: 2
-          group_ids: 6
         }
         inner_subroutines {
-          name: "all-gather_stage-1_dim-1_bidir-ring_barrier_centralized"
-          subroutine_root_id: 37
+          name: "all-gather_stream-1_stage-1_bidir-ring_barrier_centralized"
+          subroutine_root_id: 36
           execution_probability: 1
           execution_count: 1
           instructions {
-            name: "all-gather_stage-1_dim-1_bidir-ring_barrier_centralized_coordinator_recv_from_6"
-            opcode: "recv"
+            name: "all-gather_stream-1_stage-1_bidir-ring_barrier_centralized_send_to_0"
+            opcode: "send"
             instruction_id: 35
             communication_groups {
-              group_ids: 6
+              group_ids: 0
             }
           }
           instructions {
-            name: "all-gather_stage-1_dim-1_bidir-ring_barrier_centralized_coordinator_send_to_6"
-            opcode: "send"
+            name: "all-gather_stream-1_stage-1_bidir-ring_barrier_centralized_recv_from_0"
+            opcode: "recv"
             instruction_id: 36
             communication_groups {
-              group_ids: 6
+              group_ids: 0
             }
             operand_ids: 35
           }
-          instructions {
-            name: "all-gather_stage-1_dim-1_bidir-ring_barrier_centralized_root_2"
-            opcode: "null"
-            instruction_id: 37
-            operand_ids: 36
-          }
         }
       }
       instructions {
-        name: "all-gather_stage-1_dim-1_bidir-ring_cw"
+        name: "all-gather_stream-1_stage-1_bidir-ring_cw"
         opcode: "all-gather"
-        instruction_id: 38
+        instruction_id: 37
         bytes_out: 20
         communication_groups {
+          group_ids: 0
           group_ids: 2
-          group_ids: 6
         }
         operand_ids: 34
         inner_subroutines {
-          name: "all-gather_stage-1_dim-1_bidir-ring_cw_unidir-ring"
-          subroutine_root_id: 39
+          name: "all-gather_stream-1_stage-1_bidir-ring_cw_unidir-ring"
+          subroutine_root_id: 38
           execution_probability: 1
           execution_count: 1
           instructions {
-            name: "all-gather_stage-1_dim-1_bidir-ring_cw_unidir-ring_sendrecv_1"
+            name: "all-gather_stream-1_stage-1_bidir-ring_cw_unidir-ring_sendrecv_1"
             opcode: "sendrecv"
-            instruction_id: 39
+            instruction_id: 38
             bytes_in: 10
             bytes_out: 10
             communication_groups {
-              group_ids: 6
-              group_ids: 6
+              group_ids: 0
+              group_ids: 0
             }
           }
         }
       }
       instructions {
-        name: "all-gather_stage-1_dim-1_bidir-ring_ccw"
+        name: "all-gather_stream-1_stage-1_bidir-ring_ccw"
         opcode: "all-gather"
-        instruction_id: 40
+        instruction_id: 39
         bytes_out: 20
         communication_groups {
-          group_ids: 6
           group_ids: 2
+          group_ids: 0
         }
         operand_ids: 34
         inner_subroutines {
-          name: "all-gather_stage-1_dim-1_bidir-ring_ccw_unidir-ring"
-          subroutine_root_id: 41
+          name: "all-gather_stream-1_stage-1_bidir-ring_ccw_unidir-ring"
+          subroutine_root_id: 40
           execution_probability: 1
           execution_count: 1
           instructions {
-            name: "all-gather_stage-1_dim-1_bidir-ring_ccw_unidir-ring_sendrecv_1"
+            name: "all-gather_stream-1_stage-1_bidir-ring_ccw_unidir-ring_sendrecv_1"
             opcode: "sendrecv"
-            instruction_id: 41
+            instruction_id: 40
             bytes_in: 10
             bytes_out: 10
             communication_groups {
-              group_ids: 6
-              group_ids: 6
+              group_ids: 0
+              group_ids: 0
             }
           }
         }
       }
       instructions {
-        name: "all-gather_stage-1_dim-1_bidir-ring_root_2"
+        name: "all-gather_stream-1_stage-1_bidir-ring_root_2"
         opcode: "null"
-        instruction_id: 42
-        operand_ids: 38
-        operand_ids: 40
+        instruction_id: 41
+        operand_ids: 37
+        operand_ids: 39
       }
     }
-  }
-  instructions {
-    name: "all-gather_stage-1_root"
-    opcode: "null"
-    instruction_id: 43
-    operand_ids: 24
-    operand_ids: 33
   }
   instructions {
     name: "all-gather_conc"
     opcode: "all-gather"
-    instruction_id: 44
-    bytes_out: 80
+    instruction_id: 42
+    bytes_out: 160
     communication_groups {
       group_ids: 2
       group_ids: 3
     }
-    operand_ids: 43
+    operand_ids: 13
+    operand_ids: 33
     inner_subroutines {
       name: "all-gather_conc_bidir-ring"
-      subroutine_root_id: 53
+      subroutine_root_id: 51
       execution_probability: 1
       execution_count: 1
       instructions {
         name: "all-gather_conc_bidir-ring_barrier"
         opcode: "barrier"
-        instruction_id: 45
+        instruction_id: 43
         communication_groups {
           group_ids: 2
           group_ids: 3
         }
         inner_subroutines {
           name: "all-gather_conc_bidir-ring_barrier_centralized"
-          subroutine_root_id: 48
+          subroutine_root_id: 46
           execution_probability: 1
           execution_count: 1
           instructions {
             name: "all-gather_conc_bidir-ring_barrier_centralized_coordinator_recv_from_3"
             opcode: "recv"
-            instruction_id: 46
+            instruction_id: 44
             communication_groups {
               group_ids: 3
             }
@@ -1171,41 +1043,41 @@ inner_subroutines {
           instructions {
             name: "all-gather_conc_bidir-ring_barrier_centralized_coordinator_send_to_3"
             opcode: "send"
-            instruction_id: 47
+            instruction_id: 45
             communication_groups {
               group_ids: 3
             }
-            operand_ids: 46
+            operand_ids: 44
           }
           instructions {
             name: "all-gather_conc_bidir-ring_barrier_centralized_root_2"
             opcode: "null"
-            instruction_id: 48
-            operand_ids: 47
+            instruction_id: 46
+            operand_ids: 45
           }
         }
       }
       instructions {
         name: "all-gather_conc_bidir-ring_cw"
         opcode: "all-gather"
-        instruction_id: 49
-        bytes_out: 40
+        instruction_id: 47
+        bytes_out: 80
         communication_groups {
           group_ids: 2
           group_ids: 3
         }
-        operand_ids: 45
+        operand_ids: 43
         inner_subroutines {
           name: "all-gather_conc_bidir-ring_cw_unidir-ring"
-          subroutine_root_id: 50
+          subroutine_root_id: 48
           execution_probability: 1
           execution_count: 1
           instructions {
             name: "all-gather_conc_bidir-ring_cw_unidir-ring_sendrecv_1"
             opcode: "sendrecv"
-            instruction_id: 50
-            bytes_in: 20
-            bytes_out: 20
+            instruction_id: 48
+            bytes_in: 40
+            bytes_out: 40
             communication_groups {
               group_ids: 3
               group_ids: 3
@@ -1216,24 +1088,24 @@ inner_subroutines {
       instructions {
         name: "all-gather_conc_bidir-ring_ccw"
         opcode: "all-gather"
-        instruction_id: 51
-        bytes_out: 40
+        instruction_id: 49
+        bytes_out: 80
         communication_groups {
           group_ids: 3
           group_ids: 2
         }
-        operand_ids: 45
+        operand_ids: 43
         inner_subroutines {
           name: "all-gather_conc_bidir-ring_ccw_unidir-ring"
-          subroutine_root_id: 52
+          subroutine_root_id: 50
           execution_probability: 1
           execution_count: 1
           instructions {
             name: "all-gather_conc_bidir-ring_ccw_unidir-ring_sendrecv_1"
             opcode: "sendrecv"
-            instruction_id: 52
-            bytes_in: 20
-            bytes_out: 20
+            instruction_id: 50
+            bytes_in: 40
+            bytes_out: 40
             communication_groups {
               group_ids: 3
               group_ids: 3
@@ -1244,14 +1116,14 @@ inner_subroutines {
       instructions {
         name: "all-gather_conc_bidir-ring_root_2"
         opcode: "null"
-        instruction_id: 53
+        instruction_id: 51
+        operand_ids: 47
         operand_ids: 49
-        operand_ids: 51
       }
     }
   }
 }
-    )proto";
+      )proto";
   google::protobuf::TextFormat::ParseFromString(test_str,
                                                 &proto);
   return proto;
@@ -1273,7 +1145,7 @@ TEST(Torus2dAllGather, WithBarrier) {
   ASSERT_OK_AND_ASSIGN(auto allgather,
                        paragraph::Instruction::Create(
       paragraph::Opcode::kAllGather, "all-gather", sub_ptr));
-  allgather->SetBytesOut(80);
+  allgather->SetBytesOut(160);
   paragraph::CommunicationGroup allgather_group = {0, 1, 2, 3, 4, 5, 6, 7};
   allgather->AppendCommunicationGroup(allgather_group);
 
@@ -1318,56 +1190,56 @@ communication_groups {
 }
 inner_subroutines {
   name: "all-gather_torus-2d"
-  subroutine_root_id: 21
+  subroutine_root_id: 20
   execution_probability: 1
   execution_count: 1
   instructions {
-    name: "all-gather_stage-0_dim-1"
+    name: "all-gather_stream-0_stage-1"
     opcode: "all-gather"
     instruction_id: 4
-    bytes_out: 48
+    bytes_out: 24
     communication_groups {
       group_ids: 0
       group_ids: 2
       group_ids: 4
     }
     inner_subroutines {
-      name: "all-gather_stage-0_dim-1_bidir-ring"
+      name: "all-gather_stream-0_stage-1_bidir-ring"
       subroutine_root_id: 11
       execution_probability: 1
       execution_count: 1
       instructions {
-        name: "all-gather_stage-0_dim-1_bidir-ring_cw"
+        name: "all-gather_stream-0_stage-1_bidir-ring_cw"
         opcode: "all-gather"
         instruction_id: 5
-        bytes_out: 24
+        bytes_out: 12
         communication_groups {
           group_ids: 0
           group_ids: 2
           group_ids: 4
         }
         inner_subroutines {
-          name: "all-gather_stage-0_dim-1_bidir-ring_cw_unidir-ring"
+          name: "all-gather_stream-0_stage-1_bidir-ring_cw_unidir-ring"
           subroutine_root_id: 7
           execution_probability: 1
           execution_count: 1
           instructions {
-            name: "all-gather_stage-0_dim-1_bidir-ring_cw_unidir-ring_sendrecv_1"
+            name: "all-gather_stream-0_stage-1_bidir-ring_cw_unidir-ring_sendrecv_1"
             opcode: "sendrecv"
             instruction_id: 6
-            bytes_in: 8
-            bytes_out: 8
+            bytes_in: 4
+            bytes_out: 4
             communication_groups {
               group_ids: 0
               group_ids: 4
             }
           }
           instructions {
-            name: "all-gather_stage-0_dim-1_bidir-ring_cw_unidir-ring_sendrecv_2"
+            name: "all-gather_stream-0_stage-1_bidir-ring_cw_unidir-ring_sendrecv_2"
             opcode: "sendrecv"
             instruction_id: 7
-            bytes_in: 8
-            bytes_out: 8
+            bytes_in: 4
+            bytes_out: 4
             communication_groups {
               group_ids: 0
               group_ids: 4
@@ -1377,37 +1249,37 @@ inner_subroutines {
         }
       }
       instructions {
-        name: "all-gather_stage-0_dim-1_bidir-ring_ccw"
+        name: "all-gather_stream-0_stage-1_bidir-ring_ccw"
         opcode: "all-gather"
         instruction_id: 8
-        bytes_out: 24
+        bytes_out: 12
         communication_groups {
           group_ids: 4
           group_ids: 2
           group_ids: 0
         }
         inner_subroutines {
-          name: "all-gather_stage-0_dim-1_bidir-ring_ccw_unidir-ring"
+          name: "all-gather_stream-0_stage-1_bidir-ring_ccw_unidir-ring"
           subroutine_root_id: 10
           execution_probability: 1
           execution_count: 1
           instructions {
-            name: "all-gather_stage-0_dim-1_bidir-ring_ccw_unidir-ring_sendrecv_1"
+            name: "all-gather_stream-0_stage-1_bidir-ring_ccw_unidir-ring_sendrecv_1"
             opcode: "sendrecv"
             instruction_id: 9
-            bytes_in: 8
-            bytes_out: 8
+            bytes_in: 4
+            bytes_out: 4
             communication_groups {
               group_ids: 4
               group_ids: 0
             }
           }
           instructions {
-            name: "all-gather_stage-0_dim-1_bidir-ring_ccw_unidir-ring_sendrecv_2"
+            name: "all-gather_stream-0_stage-1_bidir-ring_ccw_unidir-ring_sendrecv_2"
             opcode: "sendrecv"
             instruction_id: 10
-            bytes_in: 8
-            bytes_out: 8
+            bytes_in: 4
+            bytes_out: 4
             communication_groups {
               group_ids: 4
               group_ids: 0
@@ -1417,7 +1289,7 @@ inner_subroutines {
         }
       }
       instructions {
-        name: "all-gather_stage-0_dim-1_bidir-ring_root_2"
+        name: "all-gather_stream-0_stage-1_bidir-ring_root_2"
         opcode: "null"
         instruction_id: 11
         operand_ids: 5
@@ -1426,124 +1298,118 @@ inner_subroutines {
     }
   }
   instructions {
-    name: "all-gather_stage-0_root"
-    opcode: "null"
-    instruction_id: 12
-    operand_ids: 4
-  }
-  instructions {
-    name: "all-gather_stage-1_dim-1"
+    name: "all-gather_stream-1_stage-0"
     opcode: "all-gather"
-    instruction_id: 13
-    bytes_out: 144
+    instruction_id: 12
+    bytes_out: 24
     communication_groups {
       group_ids: 0
       group_ids: 2
       group_ids: 4
     }
-    operand_ids: 12
     inner_subroutines {
-      name: "all-gather_stage-1_dim-1_bidir-ring"
-      subroutine_root_id: 20
+      name: "all-gather_stream-1_stage-0_bidir-ring"
+      subroutine_root_id: 19
       execution_probability: 1
       execution_count: 1
       instructions {
-        name: "all-gather_stage-1_dim-1_bidir-ring_cw"
+        name: "all-gather_stream-1_stage-0_bidir-ring_cw"
         opcode: "all-gather"
-        instruction_id: 14
-        bytes_out: 72
+        instruction_id: 13
+        bytes_out: 12
         communication_groups {
           group_ids: 0
           group_ids: 2
           group_ids: 4
         }
         inner_subroutines {
-          name: "all-gather_stage-1_dim-1_bidir-ring_cw_unidir-ring"
-          subroutine_root_id: 16
+          name: "all-gather_stream-1_stage-0_bidir-ring_cw_unidir-ring"
+          subroutine_root_id: 15
           execution_probability: 1
           execution_count: 1
           instructions {
-            name: "all-gather_stage-1_dim-1_bidir-ring_cw_unidir-ring_sendrecv_1"
+            name: "all-gather_stream-1_stage-0_bidir-ring_cw_unidir-ring_sendrecv_1"
+            opcode: "sendrecv"
+            instruction_id: 14
+            bytes_in: 4
+            bytes_out: 4
+            communication_groups {
+              group_ids: 0
+              group_ids: 4
+            }
+          }
+          instructions {
+            name: "all-gather_stream-1_stage-0_bidir-ring_cw_unidir-ring_sendrecv_2"
             opcode: "sendrecv"
             instruction_id: 15
-            bytes_in: 24
-            bytes_out: 24
+            bytes_in: 4
+            bytes_out: 4
             communication_groups {
               group_ids: 0
               group_ids: 4
             }
-          }
-          instructions {
-            name: "all-gather_stage-1_dim-1_bidir-ring_cw_unidir-ring_sendrecv_2"
-            opcode: "sendrecv"
-            instruction_id: 16
-            bytes_in: 24
-            bytes_out: 24
-            communication_groups {
-              group_ids: 0
-              group_ids: 4
-            }
-            operand_ids: 15
+            operand_ids: 14
           }
         }
       }
       instructions {
-        name: "all-gather_stage-1_dim-1_bidir-ring_ccw"
+        name: "all-gather_stream-1_stage-0_bidir-ring_ccw"
         opcode: "all-gather"
-        instruction_id: 17
-        bytes_out: 72
+        instruction_id: 16
+        bytes_out: 12
         communication_groups {
           group_ids: 4
           group_ids: 2
           group_ids: 0
         }
         inner_subroutines {
-          name: "all-gather_stage-1_dim-1_bidir-ring_ccw_unidir-ring"
-          subroutine_root_id: 19
+          name: "all-gather_stream-1_stage-0_bidir-ring_ccw_unidir-ring"
+          subroutine_root_id: 18
           execution_probability: 1
           execution_count: 1
           instructions {
-            name: "all-gather_stage-1_dim-1_bidir-ring_ccw_unidir-ring_sendrecv_1"
+            name: "all-gather_stream-1_stage-0_bidir-ring_ccw_unidir-ring_sendrecv_1"
             opcode: "sendrecv"
-            instruction_id: 18
-            bytes_in: 24
-            bytes_out: 24
+            instruction_id: 17
+            bytes_in: 4
+            bytes_out: 4
             communication_groups {
               group_ids: 4
               group_ids: 0
             }
           }
           instructions {
-            name: "all-gather_stage-1_dim-1_bidir-ring_ccw_unidir-ring_sendrecv_2"
+            name: "all-gather_stream-1_stage-0_bidir-ring_ccw_unidir-ring_sendrecv_2"
             opcode: "sendrecv"
-            instruction_id: 19
-            bytes_in: 24
-            bytes_out: 24
+            instruction_id: 18
+            bytes_in: 4
+            bytes_out: 4
             communication_groups {
               group_ids: 4
               group_ids: 0
             }
-            operand_ids: 18
+            operand_ids: 17
           }
         }
       }
       instructions {
-        name: "all-gather_stage-1_dim-1_bidir-ring_root_2"
+        name: "all-gather_stream-1_stage-0_bidir-ring_root_2"
         opcode: "null"
-        instruction_id: 20
-        operand_ids: 14
-        operand_ids: 17
+        instruction_id: 19
+        operand_ids: 13
+        operand_ids: 16
       }
     }
   }
   instructions {
-    name: "all-gather_stage-1_root"
+    name: "all-gather_root"
     opcode: "null"
-    instruction_id: 21
-    operand_ids: 13
+    instruction_id: 20
+    operand_ids: 4
+    operand_ids: 12
   }
 }
-    )proto";
+      )proto";
   google::protobuf::TextFormat::ParseFromString(test_str,
                                                 &proto);
   return proto;
