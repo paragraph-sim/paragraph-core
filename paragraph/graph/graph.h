@@ -78,7 +78,10 @@ class Graph {
   const std::vector<Instruction*> InstructionsPostOrder() const;
 
   // Checks if all instructions in the graph are reachable in PostOrder view
-  absl::Status IsConnected(bool drop_disconnected = false);
+  bool IsConnected();
+  //
+  // Recursively drops all disconnected instructions from the graph
+  absl::Status DropDisconnected();
 
   // Applies communication tags to the {Recv,Send}{Start,Done} instructions.
   void ApplyCommunicationTags();

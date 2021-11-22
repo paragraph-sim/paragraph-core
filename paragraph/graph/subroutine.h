@@ -122,7 +122,12 @@ class Subroutine {
   // Checks if all instructions in subroutines are connected to the root,
   // i.e. there are no instructions in instruction list that don't appear in
   // PostOrder view
-  absl::Status IsConnected(bool drop_disconnected = false);
+  bool IsConnected();
+
+  // Recursively drops all disconnected instructions from the subroutine,
+  // including disconnected instructions in the inner subroutine of its
+  // nested instructions
+  absl::Status DropDisconnected();
 
   // Removes an instruction from the subroutine instructions list
   void RemoveInstruction(Instruction* instruction);
@@ -202,6 +207,9 @@ class Subroutine {
   void PostOrderHelper(absl::flat_hash_map<Instruction*, bool>* visited,
                        std::vector<Instruction*>* postorder,
                        bool skip_inner_subroutines = false);
+
+  // Private method that's needed to implement IsConnected and DropDisconnected
+  absl::Status CheckIfConnected(bool drop_disconnected = false);
 
   // Module containing this computation.
   Graph* graph_;

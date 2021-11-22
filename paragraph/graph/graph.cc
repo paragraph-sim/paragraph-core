@@ -66,8 +66,17 @@ const std::vector<Instruction*> Graph::InstructionsPostOrder() const {
   return postorder;
 }
 
-absl::Status Graph::IsConnected(bool drop_disconnected) {
-  RETURN_IF_ERROR(entry_subroutine_->IsConnected(drop_disconnected));
+bool Graph::IsConnected() {
+  if (entry_subroutine_->CheckIfConnected(/*drop_disconnected */ false).ok()) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+absl::Status Graph::DropDisconnected() {
+  RETURN_IF_ERROR(entry_subroutine_->CheckIfConnected(
+      /*drop_disconnected = */ true));
   return absl::OkStatus();
 }
 

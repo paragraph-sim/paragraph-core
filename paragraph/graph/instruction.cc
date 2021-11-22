@@ -149,9 +149,9 @@ void Instruction::PostOrderHelper(
   postorder->push_back(this);
 }
 
-absl::Status Instruction::IsConnected(bool drop_disconnected) {
+absl::Status Instruction::CheckIfConnected(bool drop_disconnected) {
   for (auto& subroutine : inner_subroutines_) {
-    RETURN_IF_ERROR(subroutine->IsConnected(drop_disconnected));
+    RETURN_IF_ERROR(subroutine->CheckIfConnected(drop_disconnected));
   }
   return absl::OkStatus();
 }

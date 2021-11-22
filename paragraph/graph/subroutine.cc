@@ -82,7 +82,20 @@ void Subroutine::PostOrderHelper(
   postorder->push_back(root_instruction_);
 }
 
-absl::Status Subroutine::IsConnected(bool drop_disconnected) {
+bool Subroutine::IsConnected() {
+  if (CheckIfConnected(/*drop_disconnected = */ false).ok()) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+absl::Status Subroutine::DropDisconnected() {
+  RETURN_IF_ERROR(CheckIfConnected(/*drop_disconnected = */ true));
+  return absl::OkStatus();
+}
+
+absl::Status Subroutine::CheckIfConnected(bool drop_disconnected) {
   std::cout << name_ << " " << drop_disconnected << std::endl;
   RETURN_IF_FALSE(root_instruction_ != nullptr,
                   absl::InternalError)
@@ -103,7 +116,7 @@ absl::Status Subroutine::IsConnected(bool drop_disconnected) {
           connected_instructions.end()) {
         disconnected.push_back(instruction.get());
       } else {
-        RETURN_IF_ERROR(instruction->IsConnected(drop_disconnected));
+        RETURN_IF_ERROR(instruction->CheckIfConnected(drop_disconnected));
       }
     }
     while (!disconnected.empty()) {
@@ -114,7 +127,7 @@ absl::Status Subroutine::IsConnected(bool drop_disconnected) {
     }
   } else {
     for (auto& instruction : instructions_) {
-      RETURN_IF_ERROR(instruction->IsConnected(drop_disconnected));
+      RETURN_IF_ERROR(instruction->CheckIfConnected(drop_disconnected));
       RETURN_IF_FALSE(connected_instructions.find(instruction.get()) !=
                       connected_instructions.end(), absl::InternalError)
         << "Subroutine " << name_ << " has disconnected instruction "
