@@ -26,7 +26,7 @@
 
 // Tests expanding 1D-Mesh reduce-scatter
 TEST(Mesh1dReduceScatter, NoBarrier) {
-  auto graph = absl::make_unique<paragraph::Graph>("test_graph", 1);
+  auto graph = absl::make_unique<paragraph::Graph>("test_graph", 2);
   auto sub = absl::make_unique<paragraph::Subroutine>(
       "test_subroutine", graph.get());
   auto sub_ptr = sub.get();
@@ -91,7 +91,7 @@ communication_groups {
 }
 inner_subroutines {
   name: "reduce-scatter_mesh-1d"
-  subroutine_root_id: 32
+  subroutine_root_id: 31
   execution_probability: 1
   execution_count: 1
   instructions {
@@ -101,8 +101,8 @@ inner_subroutines {
     bytes_in: 10
     bytes_out: 10
     communication_groups {
-      group_ids: 0
-      group_ids: 0
+      group_ids: 1
+      group_ids: 1
     }
   }
   instructions {
@@ -144,8 +144,8 @@ inner_subroutines {
     bytes_in: 10
     bytes_out: 10
     communication_groups {
-      group_ids: 2
-      group_ids: 2
+      group_ids: 3
+      group_ids: 3
     }
   }
   instructions {
@@ -188,134 +188,126 @@ inner_subroutines {
     operand_ids: 8
   }
   instructions {
-    name: "reduce-scatter_mesh-1d_ccw_send_1"
-    opcode: "send"
+    name: "reduce-scatter_mesh-1d_ccw_sendrecv_1"
+    opcode: "sendrecv"
     instruction_id: 18
+    bytes_in: 10
     bytes_out: 10
     communication_groups {
-      group_ids: 0
+      group_ids: 1
+      group_ids: 1
     }
     operand_ids: 17
   }
   instructions {
+    name: "reduce-scatter_mesh-1d_ccw_reduction_1"
+    opcode: "call"
+    instruction_id: 19
+    operand_ids: 18
+    inner_subroutines {
+      name: "reduction_subroutine_ccw_phase_1"
+      subroutine_root_id: 22
+      execution_probability: 1
+      execution_count: 1
+      instructions {
+        name: "op1_ccw_phase_1"
+        opcode: "delay"
+        instruction_id: 20
+        bytes_out: 10
+      }
+      instructions {
+        name: "op2_ccw_phase_1"
+        opcode: "delay"
+        instruction_id: 21
+        bytes_out: 10
+      }
+      instructions {
+        name: "sum_ccw_phase_1"
+        opcode: "delay"
+        instruction_id: 22
+        ops: 20
+        operand_ids: 20
+        operand_ids: 21
+      }
+    }
+  }
+  instructions {
     name: "reduce-scatter_mesh-1d_cw_sendrecv_1"
     opcode: "sendrecv"
-    instruction_id: 19
+    instruction_id: 23
     bytes_in: 10
     bytes_out: 10
     communication_groups {
-      group_ids: 2
-      group_ids: 2
+      group_ids: 3
+      group_ids: 3
     }
     operand_ids: 17
   }
   instructions {
     name: "reduce-scatter_mesh-1d_cw_reduction_1"
     opcode: "call"
-    instruction_id: 20
-    operand_ids: 19
+    instruction_id: 24
+    operand_ids: 23
     inner_subroutines {
       name: "reduction_subroutine_cw_phase_1"
-      subroutine_root_id: 23
+      subroutine_root_id: 27
       execution_probability: 1
       execution_count: 1
       instructions {
         name: "op1_cw_phase_1"
         opcode: "delay"
-        instruction_id: 21
+        instruction_id: 25
         bytes_out: 10
       }
       instructions {
         name: "op2_cw_phase_1"
         opcode: "delay"
-        instruction_id: 22
+        instruction_id: 26
         bytes_out: 10
       }
       instructions {
         name: "sum_cw_phase_1"
         opcode: "delay"
-        instruction_id: 23
+        instruction_id: 27
         ops: 20
-        operand_ids: 21
-        operand_ids: 22
+        operand_ids: 25
+        operand_ids: 26
       }
     }
   }
   instructions {
     name: "reduce-scatter_mesh-1d_root_1"
     opcode: "null"
-    instruction_id: 24
-    operand_ids: 20
-    operand_ids: 18
+    instruction_id: 28
+    operand_ids: 24
+    operand_ids: 19
   }
   instructions {
     name: "reduce-scatter_mesh-1d_ccw_send_2"
     opcode: "send"
-    instruction_id: 25
+    instruction_id: 29
     bytes_out: 10
     communication_groups {
-      group_ids: 0
+      group_ids: 1
     }
-    operand_ids: 24
+    operand_ids: 28
   }
   instructions {
-    name: "reduce-scatter_mesh-1d_cw_recv_2"
-    opcode: "recv"
-    instruction_id: 26
-    bytes_in: 10
+    name: "reduce-scatter_mesh-1d_cw_send_2"
+    opcode: "send"
+    instruction_id: 30
+    bytes_out: 10
     communication_groups {
-      group_ids: 2
+      group_ids: 3
     }
-    operand_ids: 24
-  }
-  instructions {
-    name: "reduce-scatter_mesh-1d_cw_reduction_2"
-    opcode: "call"
-    instruction_id: 27
-    operand_ids: 26
-    inner_subroutines {
-      name: "reduction_subroutine_cw_phase_2"
-      subroutine_root_id: 30
-      execution_probability: 1
-      execution_count: 1
-      instructions {
-        name: "op1_cw_phase_2"
-        opcode: "delay"
-        instruction_id: 28
-        bytes_out: 10
-      }
-      instructions {
-        name: "op2_cw_phase_2"
-        opcode: "delay"
-        instruction_id: 29
-        bytes_out: 10
-      }
-      instructions {
-        name: "sum_cw_phase_2"
-        opcode: "delay"
-        instruction_id: 30
-        ops: 20
-        operand_ids: 28
-        operand_ids: 29
-      }
-    }
+    operand_ids: 28
   }
   instructions {
     name: "reduce-scatter_mesh-1d_root_2"
     opcode: "null"
     instruction_id: 31
-    operand_ids: 27
-    operand_ids: 25
-  }
-  instructions {
-    name: "reduce-scatter_mesh-1d_ccw_send_3"
-    opcode: "send"
-    instruction_id: 32
-    bytes_out: 10
-    communication_groups {
-      group_ids: 0
-    }
-    operand_ids: 31
+    operand_ids: 30
+    operand_ids: 29
   }
 }
       )proto";
