@@ -224,13 +224,15 @@ shim::StatusOr<std::unique_ptr<Subroutine>>
         root->AddOperand(ccw_sendrecv);
       }
       previous_instruction = root;
-    } else if (!(cw_send_flag || cw_recv_flag)) {
+    } else if ((ccw_send_flag || ccw_recv_flag) &&
+               !(cw_send_flag || cw_recv_flag)) {
       if (ccw_recv_flag) {
         previous_instruction = ccw_reduction;
       } else {
         previous_instruction = ccw_sendrecv;
       }
-    } else if (!(ccw_send_flag || ccw_recv_flag)) {
+    } else if (!(ccw_send_flag || ccw_recv_flag) &&
+               (cw_send_flag || cw_recv_flag)) {
       if (cw_recv_flag) {
         previous_instruction = cw_reduction;
       } else {
