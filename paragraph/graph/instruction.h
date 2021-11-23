@@ -270,13 +270,18 @@ class Instruction {
   std::vector<std::unique_ptr<Subroutine>> inner_subroutines_;
 
   // Gets the instructions in this subroutine in post order from root.
-  // If skip_inner_subroutines set to true, return post order fo instructions in
-  // this subroutine.
+  // If skip_inner_subroutines set to true, return post order for instructions
+  // in this subroutine.
   // If skip_inner_subroutines set to false (default), returns
   // post order for this subroutine and all recurcive inner subroutines.
   void PostOrderHelper(absl::flat_hash_map<Instruction*, bool>* visited,
                        std::vector<Instruction*>* postorder,
                        bool skip_inner_subroutines = false);
+
+  // Checks if all instructions in inner_subroutines_ are connected to the root,
+  // i.e. there is no instructions in inner_subroutines instruction list that
+  // don't appear in PostOrder view
+  absl::Status CheckIfConnected(bool drop_disconnected = false);
 
   // Vector that encodes all communication directions for the instruction
   // For Send/Recv should have size one since it's a direct communication

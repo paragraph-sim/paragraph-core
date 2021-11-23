@@ -84,11 +84,17 @@ TEST(SimpleSim, WhileLoop) {
   while_instr->AppendInnerSubroutine(std::move(cond_sub));
 
   ASSERT_OK_AND_ASSIGN(auto send_instr, paragraph::Instruction::Create(
-      paragraph::Opcode::kSend, "send", sub_ptr, true));
+      paragraph::Opcode::kSend, "send", sub_ptr));
   paragraph::CommunicationGroup send_group = {1, 42};
   send_instr->SetBytesIn(10);
   send_instr->SetSeconds(0.07);
   send_instr->AppendCommunicationGroup(send_group);
+
+  ASSERT_OK_AND_ASSIGN(auto root_instr, paragraph::Instruction::Create(
+      paragraph::Opcode::kNull, "root", sub_ptr, true));
+  root_instr->AddOperand(instr_2);
+  root_instr->AddOperand(while_instr);
+  root_instr->AddOperand(send_instr);
 
   nlohmann::json translation_config = R"(
     {
@@ -147,7 +153,9 @@ TEST(SimpleSim, WhileLoop) {
     "1,cond_call,call,1.069000000000,1.069000000000,"
         "1.070000000000,0.001000000000,0.001000000000",
     "1,test,while,1.000000000000,1.010000000000,"
-        "1.070000000000,0.010000000000,0.060000000000"
+        "1.070000000000,0.010000000000,0.060000000000",
+    "1,root,null,1.070000000000,1.070000000000,"
+        "1.070000000000,0.000000000000,0.000000000000"
   };
 
   int counter = 0;

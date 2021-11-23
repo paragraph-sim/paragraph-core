@@ -27,11 +27,10 @@
 
 // Tests expanding send instruction for a simple push-based protocol
 TEST(Translation, AllReduceGraph) {
-  auto graph = absl::make_unique<paragraph::Graph>("test_graph", 2);
+  auto graph = absl::make_unique<paragraph::Graph>("test_graph", -1);
   auto sub = absl::make_unique<paragraph::Subroutine>(
       "test_subroutine", graph.get());
   auto sub_ptr = sub.get();
-  sub_ptr->SetId(3);
   graph->SetEntrySubroutine(std::move(sub));
 
   ASSERT_OK_AND_ASSIGN(auto instr_1, paragraph::Instruction::Create(
@@ -65,9 +64,11 @@ TEST(Translation, AllReduceGraph) {
   barrier->AppendCommunicationGroup(allreduce_group);
   barrier->AddOperand(allreduce);
 
-  ASSERT_OK_AND_ASSIGN(auto instr_3, paragraph::Instruction::Create(
+  ASSERT_OK_AND_ASSIGN(auto root_instr, paragraph::Instruction::Create(
       paragraph::Opcode::kDelay, "last_instruction", sub_ptr, true));
-  instr_3->SetOps(4);
+  root_instr->SetOps(4);
+  root_instr->AddOperand(barrier);
+  root_instr->AddOperand(instr_1);
 
   nlohmann::json translation_config = R"(
     {
@@ -157,6 +158,7 @@ entry_subroutine {
                 opcode: "recv-start"
                 instruction_id: 22
                 bonded_instruction_id: 25
+                communication_tag: 1
                 communication_groups {
                   group_ids: 2
                 }
@@ -165,8 +167,9 @@ entry_subroutine {
                 name: "all-reduce_unidir-ring_reduce-scatter_unidir-ring_sendrecv_1_sendstart"
                 opcode: "send-start"
                 instruction_id: 23
-                bonded_instruction_id: 24
                 bytes_in: 16
+                bonded_instruction_id: 24
+                communication_tag: 1
                 communication_groups {
                   group_ids: 1
                 }
@@ -177,6 +180,7 @@ entry_subroutine {
                 opcode: "send-done"
                 instruction_id: 24
                 bonded_instruction_id: 23
+                communication_tag: 1
                 communication_groups {
                   group_ids: 1
                 }
@@ -186,8 +190,9 @@ entry_subroutine {
                 name: "all-reduce_unidir-ring_reduce-scatter_unidir-ring_sendrecv_1_recvdone"
                 opcode: "recv-done"
                 instruction_id: 25
-                bonded_instruction_id: 22
                 bytes_out: 16
+                bonded_instruction_id: 22
+                communication_tag: 1
                 communication_groups {
                   group_ids: 2
                 }
@@ -256,6 +261,7 @@ entry_subroutine {
                 opcode: "recv-start"
                 instruction_id: 27
                 bonded_instruction_id: 30
+                communication_tag: 2
                 communication_groups {
                   group_ids: 2
                 }
@@ -264,8 +270,9 @@ entry_subroutine {
                 name: "all-reduce_unidir-ring_reduce-scatter_unidir-ring_sendrecv_2_sendstart"
                 opcode: "send-start"
                 instruction_id: 28
-                bonded_instruction_id: 29
                 bytes_in: 16
+                bonded_instruction_id: 29
+                communication_tag: 2
                 communication_groups {
                   group_ids: 1
                 }
@@ -276,6 +283,7 @@ entry_subroutine {
                 opcode: "send-done"
                 instruction_id: 29
                 bonded_instruction_id: 28
+                communication_tag: 2
                 communication_groups {
                   group_ids: 1
                 }
@@ -285,8 +293,9 @@ entry_subroutine {
                 name: "all-reduce_unidir-ring_reduce-scatter_unidir-ring_sendrecv_2_recvdone"
                 opcode: "recv-done"
                 instruction_id: 30
-                bonded_instruction_id: 27
                 bytes_out: 16
+                bonded_instruction_id: 27
+                communication_tag: 2
                 communication_groups {
                   group_ids: 2
                 }
@@ -372,6 +381,7 @@ entry_subroutine {
                 opcode: "recv-start"
                 instruction_id: 32
                 bonded_instruction_id: 35
+                communication_tag: 3
                 communication_groups {
                   group_ids: 2
                 }
@@ -380,8 +390,9 @@ entry_subroutine {
                 name: "all-reduce_unidir-ring_all-gather_unidir-ring_sendrecv_1_sendstart"
                 opcode: "send-start"
                 instruction_id: 33
-                bonded_instruction_id: 34
                 bytes_in: 16
+                bonded_instruction_id: 34
+                communication_tag: 3
                 communication_groups {
                   group_ids: 1
                 }
@@ -392,6 +403,7 @@ entry_subroutine {
                 opcode: "send-done"
                 instruction_id: 34
                 bonded_instruction_id: 33
+                communication_tag: 3
                 communication_groups {
                   group_ids: 1
                 }
@@ -401,8 +413,9 @@ entry_subroutine {
                 name: "all-reduce_unidir-ring_all-gather_unidir-ring_sendrecv_1_recvdone"
                 opcode: "recv-done"
                 instruction_id: 35
-                bonded_instruction_id: 32
                 bytes_out: 16
+                bonded_instruction_id: 32
+                communication_tag: 3
                 communication_groups {
                   group_ids: 2
                 }
@@ -439,6 +452,7 @@ entry_subroutine {
                 opcode: "recv-start"
                 instruction_id: 37
                 bonded_instruction_id: 40
+                communication_tag: 4
                 communication_groups {
                   group_ids: 2
                 }
@@ -447,8 +461,9 @@ entry_subroutine {
                 name: "all-reduce_unidir-ring_all-gather_unidir-ring_sendrecv_2_sendstart"
                 opcode: "send-start"
                 instruction_id: 38
-                bonded_instruction_id: 39
                 bytes_in: 16
+                bonded_instruction_id: 39
+                communication_tag: 4
                 communication_groups {
                   group_ids: 1
                 }
@@ -459,6 +474,7 @@ entry_subroutine {
                 opcode: "send-done"
                 instruction_id: 39
                 bonded_instruction_id: 38
+                communication_tag: 4
                 communication_groups {
                   group_ids: 1
                 }
@@ -468,8 +484,9 @@ entry_subroutine {
                 name: "all-reduce_unidir-ring_all-gather_unidir-ring_sendrecv_2_recvdone"
                 opcode: "recv-done"
                 instruction_id: 40
-                bonded_instruction_id: 37
                 bytes_out: 16
+                bonded_instruction_id: 37
+                communication_tag: 4
                 communication_groups {
                   group_ids: 2
                 }
@@ -505,12 +522,15 @@ entry_subroutine {
     opcode: "delay"
     instruction_id: 7
     ops: 4
+    operand_ids: 6
+    operand_ids: 1
   }
 }
       )proto";
   google::protobuf::TextFormat::ParseFromString(graph_0_str, &graph_0_proto);
   for (auto& g : translated_graphs) {
     if (g->GetName() == "test_graph_0") {
+      EXPECT_OK(g->ToProto().status());
       EXPECT_TRUE(google::protobuf::util::MessageDifferencer::Equals(
           g->ToProto().value(), graph_0_proto));
       // There are 41 Ids assign by the graph, of which 3 belong to initial

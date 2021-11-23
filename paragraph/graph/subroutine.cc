@@ -75,10 +75,66 @@ void Subroutine::PostOrderHelper(
   postorder->pop_back();
   for (auto& instruction : instructions_) {
     if (visited->find(instruction.get()) == visited->end()) {
-      postorder->push_back(instruction.get());
+      instruction->PostOrderHelper(
+          visited, postorder, skip_inner_subroutines);
     }
   }
   postorder->push_back(root_instruction_);
+}
+
+bool Subroutine::IsConnected() {
+  if (CheckIfConnected(/*drop_disconnected = */ false).ok()) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+absl::Status Subroutine::DropDisconnected() {
+  RETURN_IF_ERROR(CheckIfConnected(/*drop_disconnected = */ true));
+  return absl::OkStatus();
+}
+
+absl::Status Subroutine::CheckIfConnected(bool drop_disconnected) {
+  std::cout << name_ << " " << drop_disconnected << std::endl;
+  RETURN_IF_FALSE(root_instruction_ != nullptr,
+                  absl::InternalError)
+    << "Subroutine " << name_ << " does not have the root instruction.";
+  absl::flat_hash_map<Instruction*, bool> visited;
+  std::vector<Instruction*> postorder;
+  root_instruction_->PostOrderHelper(&visited, &postorder, true);
+  absl::flat_hash_set<Instruction*> connected_instructions;
+  for (auto& seen_instruction : postorder) {
+    RETURN_IF_FALSE(connected_instructions.insert(seen_instruction).second,
+                    absl::InternalError) << "Subroutine "
+      << name_ << " has repeated instructions " << seen_instruction->GetName();
+  }
+  if (drop_disconnected) {
+    std::vector<Instruction*> disconnected;
+    for (auto& instruction : instructions_) {
+      if (connected_instructions.find(instruction.get()) ==
+          connected_instructions.end()) {
+        disconnected.push_back(instruction.get());
+      } else {
+        RETURN_IF_ERROR(instruction->CheckIfConnected(drop_disconnected));
+      }
+    }
+    while (!disconnected.empty()) {
+      auto instr_to_remove = disconnected.back();
+      disconnected.pop_back();
+      std::cout << "Removing instr " << instr_to_remove->GetName() << std::endl;
+      RemoveInstruction(instr_to_remove);
+    }
+  } else {
+    for (auto& instruction : instructions_) {
+      RETURN_IF_ERROR(instruction->CheckIfConnected(drop_disconnected));
+      RETURN_IF_FALSE(connected_instructions.find(instruction.get()) !=
+                      connected_instructions.end(), absl::InternalError)
+        << "Subroutine " << name_ << " has disconnected instruction "
+        << instruction->GetName();
+    }
+  }
+  return absl::OkStatus();
 }
 
 std::vector<Instruction*> Subroutine::InstructionsPostOrder(

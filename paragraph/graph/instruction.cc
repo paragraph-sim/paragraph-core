@@ -149,6 +149,13 @@ void Instruction::PostOrderHelper(
   postorder->push_back(this);
 }
 
+absl::Status Instruction::CheckIfConnected(bool drop_disconnected) {
+  for (auto& subroutine : inner_subroutines_) {
+    RETURN_IF_ERROR(subroutine->CheckIfConnected(drop_disconnected));
+  }
+  return absl::OkStatus();
+}
+
 Instruction* Instruction::GetBondedInstruction() {
   return bonded_instruction_;
 }
@@ -191,7 +198,6 @@ void Instruction::AppendInnerSubroutine(
 
 absl::Status Instruction::RemoveInnerSubroutine(Subroutine* subroutine) {
   for (auto& instruction : subroutine->InstructionsPostOrder()) {
-    std::cout << instruction->GetName() << std::endl;
     if (instruction == subroutine->GetRootInstruction()) {
       RETURN_IF_ERROR(subroutine->SetRootInstruction(nullptr));
     }

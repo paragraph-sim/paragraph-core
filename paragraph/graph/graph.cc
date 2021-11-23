@@ -66,6 +66,20 @@ const std::vector<Instruction*> Graph::InstructionsPostOrder() const {
   return postorder;
 }
 
+bool Graph::IsConnected() {
+  if (entry_subroutine_->CheckIfConnected(/*drop_disconnected */ false).ok()) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+absl::Status Graph::DropDisconnected() {
+  RETURN_IF_ERROR(entry_subroutine_->CheckIfConnected(
+      /*drop_disconnected = */ true));
+  return absl::OkStatus();
+}
+
 void Graph::ApplyCommunicationTags() {
   absl::flat_hash_map<uint64_t, uint64_t> tag_counters;
   for (Instruction* instruction : InstructionsPostOrder()) {
@@ -216,7 +230,7 @@ shim::StatusOr<GraphProto> Graph::ToProto() const {
 }
 
 shim::StatusOr<std::unique_ptr<Graph>> Graph::CreateFromProto(
-      const GraphProto& proto, bool reset_ids) {
+      const GraphProto& proto, bool reset_ids, bool skip_validation) {
   auto graph = absl::make_unique<Graph>(proto.name(), proto.processor_id());
   ASSIGN_OR_RETURN(auto entry_subroutine,
                    Subroutine::CreateFromProto(proto.entry_subroutine(),
@@ -232,10 +246,12 @@ shim::StatusOr<std::unique_ptr<Graph>> Graph::CreateFromProto(
                                         instruction->GetId() + 1);
     }
   }
-  if (graph->IsIndividualized()) {
-    RETURN_IF_ERROR(graph->ValidateIndividualized());
-  } else {
-    RETURN_IF_ERROR(graph->ValidateComposite());
+  if (!skip_validation) {
+    if (graph->IsIndividualized()) {
+      RETURN_IF_ERROR(graph->ValidateIndividualized());
+    } else {
+      RETURN_IF_ERROR(graph->ValidateComposite());
+    }
   }
   return graph;
 }

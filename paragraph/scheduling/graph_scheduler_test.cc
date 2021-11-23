@@ -108,10 +108,16 @@ TEST(Scheduler, Creation) {
   while_instr->AppendInnerSubroutine(std::move(cond_sub));
 
   ASSERT_OK_AND_ASSIGN(auto send_instr, paragraph::Instruction::Create(
-      paragraph::Opcode::kSend, "send", sub_ptr, true));
+      paragraph::Opcode::kSend, "send", sub_ptr));
   paragraph::CommunicationGroup send_group = {42};
   send_instr->SetBytesIn(8.);
   send_instr->AppendCommunicationGroup(send_group);
+
+  ASSERT_OK_AND_ASSIGN(auto root_instr, paragraph::Instruction::Create(
+      paragraph::Opcode::kNull, "root", sub_ptr, true));
+  root_instr->AddOperand(instr_3);
+  root_instr->AddOperand(while_instr);
+  root_instr->AddOperand(send_instr);
 
   ASSERT_OK_AND_ASSIGN(auto scheduler,
                        paragraph::GraphScheduler::Create(graph.get()));
@@ -183,10 +189,16 @@ TEST(Scheduler, WhileInstruction) {
   while_instr->AppendInnerSubroutine(std::move(cond_sub));
 
   ASSERT_OK_AND_ASSIGN(auto send_instr, paragraph::Instruction::Create(
-      paragraph::Opcode::kSend, "send", sub_ptr, true));
+      paragraph::Opcode::kSend, "send", sub_ptr));
   paragraph::CommunicationGroup send_group = {42};
   send_instr->SetBytesIn(8.);
   send_instr->AppendCommunicationGroup(send_group);
+
+  ASSERT_OK_AND_ASSIGN(auto root_instr, paragraph::Instruction::Create(
+      paragraph::Opcode::kNull, "root", sub_ptr, true));
+  root_instr->AddOperand(instr_3);
+  root_instr->AddOperand(while_instr);
+  root_instr->AddOperand(send_instr);
 
   ASSERT_OK_AND_ASSIGN(auto scheduler,
                        paragraph::GraphScheduler::Create(graph.get()));
@@ -278,8 +290,13 @@ TEST(Scheduler, NullInstruction) {
   allreduce->AppendInnerSubroutine(std::move(reduction_sub));
 
   ASSERT_OK_AND_ASSIGN(auto last, paragraph::Instruction::Create(
-      paragraph::Opcode::kDelay, "last_instruction", sub_ptr, true));
+      paragraph::Opcode::kDelay, "last_instruction", sub_ptr));
   last->AddOperand(allreduce);
+
+  ASSERT_OK_AND_ASSIGN(auto root_instr, paragraph::Instruction::Create(
+      paragraph::Opcode::kNull, "root", sub_ptr, true));
+  root_instr->AddOperand(instr_1);
+  root_instr->AddOperand(last);
 
   ASSERT_OK_AND_ASSIGN(auto scheduler,
                        paragraph::GraphScheduler::Create(graph.get()));
@@ -471,8 +488,13 @@ TEST(Scheduler, GetReadyInstructionQueue) {
   allreduce->AppendInnerSubroutine(std::move(reduction_sub));
 
   ASSERT_OK_AND_ASSIGN(auto last, paragraph::Instruction::Create(
-      paragraph::Opcode::kDelay, "last_instruction", sub_ptr, true));
+      paragraph::Opcode::kDelay, "last_instruction", sub_ptr));
   last->AddOperand(allreduce);
+
+  ASSERT_OK_AND_ASSIGN(auto root_instr, paragraph::Instruction::Create(
+      paragraph::Opcode::kNull, "root", sub_ptr, true));
+  root_instr->AddOperand(instr_1);
+  root_instr->AddOperand(last);
 
   ASSERT_OK_AND_ASSIGN(auto scheduler,
                        paragraph::GraphScheduler::Create(graph.get()));
@@ -555,7 +577,7 @@ TEST(Scheduler, LoggerIO) {
 }
 
 // Tests logger change
-TEST(GraphScheduler, LoggerChange) {
+TEST(Scheduler, LoggerChange) {
   auto graph = absl::make_unique<paragraph::Graph>("test_graph", 1);
   auto sub = absl::make_unique<paragraph::Subroutine>(
       "test_subroutine", graph.get());
