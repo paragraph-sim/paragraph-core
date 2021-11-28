@@ -90,6 +90,7 @@ shim::StatusOr<std::unique_ptr<Subroutine>>
   // Vector of previous instruction for every concurrent stream
   std::vector<Instruction*> previous_instructions(
       num_dimensions, nullptr);
+  bool conc_step = (concentration_ > 1) && !integrated_local_exchange_;
   // We initialize communication sizes for each stage and each dimension as
   // dimension and/or communication groups could be uneven
   std::vector<double> stage_comm_sizes;
@@ -97,11 +98,13 @@ shim::StatusOr<std::unique_ptr<Subroutine>>
     if ((comm_size == 0) || (comm_group.empty())) {
       stage_comm_sizes.push_back(0);
     } else {
-      stage_comm_sizes.push_back(
-          comm_size / comm_group.size() / num_dimensions);
+      double tmp_comm_size = comm_size / num_dimensions;
+      if (conc_step) {
+        tmp_comm_size /= concentration_;
+      }
+      stage_comm_sizes.push_back(tmp_comm_size);
     }
   }
-  bool conc_step = (concentration_ > 1) && !integrated_local_exchange_;
   // We have as many stages as dimensions in the Mesh
   // At every stage, we span as many concurrent single-dimensional
   // reduce-scatter as number of dimensions N we have in mesh. For every
@@ -110,14 +113,43 @@ shim::StatusOr<std::unique_ptr<Subroutine>>
   // generic case). Before starting partial exchange over each dimension, we
   // need to synchronize the processors that participate in the exchange step
   // and the processors that participated in the previous step.
-  // If `integrated_local_exchange_` set, we add communicators to the last stage
-  // exchange to minimize traffic. Otherwise, we run local communicators
-  // exchange as the last step.
+  // We start reducescatter with full size exchange reducing the data across the
+  // first iterating dimension. On every next stage we decrease exchanging data
+  // size as part of the data was reduced iterating over previous dimensions.
+  // If `integrated_local_exchange_` set, we add communicators to the first
+  // stage exchange to minimize traffic. Otherwise, we run local communicators
+  // exchange as the first step.
+  if (conc_step) {
+    // Check if we have non-trivial concentration and need to perform
+    // explicit local exchange step
+    auto local_comm_group = CommunicationGroupProjectionOnDimensions(
+        {0}, processor_id, comm_group,
+        dimension_sizes_, concentration_);
+    if (local_comm_group.size() > 1) {
+      ASSIGN_OR_RETURN(auto reducescatter_conc, Instruction::Create(
+          Opcode::kReduceScatter,
+          absl::StrCat(name_prefix, "_conc"),
+          reducescatter_sub_ptr));
+      reducescatter_conc->AppendCommunicationGroup(local_comm_group);
+      reducescatter_conc->SetBytesOut(comm_size);
+      for (auto& instr : previous_instructions) {
+        RETURN_IF_FALSE(instr == nullptr, absl::InternalError) <<
+          "Reducing concentrators should be the first step.";
+        instr = reducescatter_conc;
+      }
+      ASSIGN_OR_RETURN(auto reduction_subroutine_conc,
+                       reduction_subroutine->Clone("", /*reset_ids*/ false));
+      reducescatter_conc->AppendInnerSubroutine(std::move(
+          reduction_subroutine_conc));
+      RETURN_IF_ERROR(reducescatter_translator_->Translate(
+          reducescatter_conc));
+    }
+  }
   for (size_t par_stream = 0; par_stream < num_dimensions; par_stream++) {
     for (size_t stage = 0; stage < num_dimensions; stage++) {
       size_t dim = (par_stream + stage) % num_dimensions;
       bool integrated_local_exchange = integrated_local_exchange_
-        && ((stage + 1) == num_dimensions);
+        && (stage == 0);
       std::unordered_set<size_t> comm_dimensions;
       CHECK(comm_dimensions.insert(dim + 1).second);
       // We only need to communicate data between concentrators once. If we
@@ -129,10 +161,6 @@ shim::StatusOr<std::unique_ptr<Subroutine>>
       auto new_comm_group = CommunicationGroupProjectionOnDimensions(
           comm_dimensions, processor_id, comm_group,
           dimension_sizes_, concentration_);
-      // Every new stage we should increase communication size
-      // On the first stage we only exchange data laying in the 1st dimension
-      // On the second stage we exchange data from both 1st and 2nd dimensions
-      stage_comm_sizes.at(par_stream) *= new_comm_group.size();
       // If we don't have any communication in original comm_group within the
       // current dimension, just leave it
       if (new_comm_group.size() > 1) {
@@ -156,45 +184,21 @@ shim::StatusOr<std::unique_ptr<Subroutine>>
         RETURN_IF_ERROR(reducescatter_translator_->Translate(
             reducescatter_stage));
         previous_instructions.at(par_stream) = reducescatter_stage;
+        // Every new stage we should decrease communication size
+        // On the first stage we reduce full data laying in the 1st dimension.
+        // On the second stage we don't reduce data from the previous dimension
+        stage_comm_sizes.at(par_stream) /= new_comm_group.size();
       }
     }
   }
-  // Check if we have non-trivial concentration and need to perform
-  // explicit local exchange step
-  if (conc_step) {
-    auto local_comm_group = CommunicationGroupProjectionOnDimensions(
-        {0}, processor_id, comm_group,
-        dimension_sizes_, concentration_);
-    if (local_comm_group.size() > 1) {
-      ASSIGN_OR_RETURN(auto reducescatter_conc, Instruction::Create(
-          Opcode::kReduceScatter,
-          absl::StrCat(name_prefix, "_conc"),
-          reducescatter_sub_ptr,
-          true));
-      reducescatter_conc->AppendCommunicationGroup(local_comm_group);
-      reducescatter_conc->SetBytesOut(comm_size);
-      for (auto& instr : previous_instructions) {
-        if (instr != nullptr) {
-          reducescatter_conc->AddOperand(instr);
-        }
-      }
-      ASSIGN_OR_RETURN(auto reduction_subroutine_conc,
-                       reduction_subroutine->Clone("", /*reset_ids*/ false));
-      reducescatter_conc->AppendInnerSubroutine(std::move(
-          reduction_subroutine_conc));
-      RETURN_IF_ERROR(reducescatter_translator_->Translate(
-          reducescatter_conc));
-    }
-  } else {
-    ASSIGN_OR_RETURN(auto reducescatter_root, Instruction::Create(
-        Opcode::kNull,
-        absl::StrCat(name_prefix, "_root"),
-        reducescatter_sub_ptr,
-        true));
-    for (auto& instr : previous_instructions) {
-      if (instr != nullptr) {
-        reducescatter_root->AddOperand(instr);
-      }
+  ASSIGN_OR_RETURN(auto reducescatter_root, Instruction::Create(
+      Opcode::kNull,
+      absl::StrCat(name_prefix, "_root"),
+      reducescatter_sub_ptr,
+      true));
+  for (auto& instr : previous_instructions) {
+    if (instr != nullptr) {
+      reducescatter_root->AddOperand(instr);
     }
   }
   return reducescatter_subroutine;

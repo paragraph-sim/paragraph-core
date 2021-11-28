@@ -108,6 +108,9 @@ shim::StatusOr<std::unique_ptr<Subroutine>>
   // Before starting partial exchange over each dimension, we need to
   // synchronize the processors that participate in the exchange step and the
   // processors that participated in the previous step.
+  // We start allgather with a small exchange of the data that's gathered only
+  // across the first dimension. On every next stage we increase data size to
+  // include data gathered from all the previous dimensions.
   // If `integrated_local_exchange_` set, we add communicators to the last stage
   // exchange to minimize traffic. Otherwise, we run local communicators
   // exchange as the last step.
