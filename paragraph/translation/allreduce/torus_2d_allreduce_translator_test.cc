@@ -44,7 +44,7 @@ communication_groups {
 }
 inner_subroutines {
   name: "all-reduce_torus-2d"
-  subroutine_root_id: 79
+  subroutine_root_id: 105
   execution_probability: 1
   execution_count: 1
   instructions {
@@ -64,50 +64,54 @@ inner_subroutines {
     }
     inner_subroutines {
       name: "all-reduce_torus-2d_reduce-scatter_torus-2d"
-      subroutine_root_id: 78
+      subroutine_root_id: 104
       execution_probability: 1
       execution_count: 1
       instructions {
-        name: "all-reduce_torus-2d_reduce-scatter_conc"
+        name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-0"
         opcode: "reduce-scatter"
         instruction_id: 8
-        bytes_out: 48
+        bytes_out: 24
         communication_groups {
+          group_ids: 0
+          group_ids: 1
           group_ids: 2
           group_ids: 3
         }
         inner_subroutines {
-          name: "all-reduce_torus-2d_reduce-scatter_conc_bidir-ring"
-          subroutine_root_id: 21
+          name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-0_bidir-ring"
+          subroutine_root_id: 41
           execution_probability: 1
           execution_count: 1
           instructions {
-            name: "all-reduce_torus-2d_reduce-scatter_conc_bidir-ring_cw"
+            name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-0_bidir-ring_cw"
             opcode: "reduce-scatter"
             instruction_id: 9
-            bytes_out: 24
+            bytes_out: 12
             communication_groups {
+              group_ids: 0
+              group_ids: 1
               group_ids: 2
               group_ids: 3
             }
             inner_subroutines {
-              name: "all-reduce_torus-2d_reduce-scatter_conc_bidir-ring_cw_unidir-ring"
-              subroutine_root_id: 11
+              name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-0_bidir-ring_cw_unidir-ring"
+              subroutine_root_id: 21
               execution_probability: 1
               execution_count: 1
               instructions {
-                name: "all-reduce_torus-2d_reduce-scatter_conc_bidir-ring_cw_unidir-ring_sendrecv_1"
+                name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-0_bidir-ring_cw_unidir-ring_sendrecv_1"
                 opcode: "sendrecv"
                 instruction_id: 10
-                bytes_in: 12
-                bytes_out: 12
+                bytes_in: 3
+                bytes_out: 3
                 communication_groups {
-                  group_ids: 3
+                  group_ids: 1
                   group_ids: 3
                 }
               }
               instructions {
-                name: "all-reduce_torus-2d_reduce-scatter_conc_bidir-ring_cw_unidir-ring_reduction_1"
+                name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-0_bidir-ring_cw_unidir-ring_reduction_1"
                 opcode: "call"
                 instruction_id: 11
                 operand_ids: 10
@@ -120,163 +124,109 @@ inner_subroutines {
                     name: "op1_phase_1"
                     opcode: "delay"
                     instruction_id: 12
-                    bytes_out: 12
+                    bytes_out: 3
                   }
                   instructions {
                     name: "op2_phase_1"
                     opcode: "delay"
                     instruction_id: 13
-                    bytes_out: 12
+                    bytes_out: 3
                   }
                   instructions {
                     name: "sum_phase_1"
                     opcode: "delay"
                     instruction_id: 14
-                    ops: 24
+                    ops: 6
                     operand_ids: 12
                     operand_ids: 13
                   }
                 }
               }
-            }
-          }
-          instructions {
-            name: "all-reduce_torus-2d_reduce-scatter_conc_bidir-ring_ccw"
-            opcode: "reduce-scatter"
-            instruction_id: 15
-            bytes_out: 24
-            communication_groups {
-              group_ids: 3
-              group_ids: 2
-            }
-            inner_subroutines {
-              name: "all-reduce_torus-2d_reduce-scatter_conc_bidir-ring_ccw_unidir-ring"
-              subroutine_root_id: 17
-              execution_probability: 1
-              execution_count: 1
               instructions {
-                name: "all-reduce_torus-2d_reduce-scatter_conc_bidir-ring_ccw_unidir-ring_sendrecv_1"
+                name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-0_bidir-ring_cw_unidir-ring_sendrecv_2"
                 opcode: "sendrecv"
-                instruction_id: 16
-                bytes_in: 12
-                bytes_out: 12
-                communication_groups {
-                  group_ids: 3
-                  group_ids: 3
-                }
-              }
-              instructions {
-                name: "all-reduce_torus-2d_reduce-scatter_conc_bidir-ring_ccw_unidir-ring_reduction_1"
-                opcode: "call"
-                instruction_id: 17
-                operand_ids: 16
-                inner_subroutines {
-                  name: "reduction_subroutine_phase_1"
-                  subroutine_root_id: 20
-                  execution_probability: 1
-                  execution_count: 1
-                  instructions {
-                    name: "op1_phase_1"
-                    opcode: "delay"
-                    instruction_id: 18
-                    bytes_out: 12
-                  }
-                  instructions {
-                    name: "op2_phase_1"
-                    opcode: "delay"
-                    instruction_id: 19
-                    bytes_out: 12
-                  }
-                  instructions {
-                    name: "sum_phase_1"
-                    opcode: "delay"
-                    instruction_id: 20
-                    ops: 24
-                    operand_ids: 18
-                    operand_ids: 19
-                  }
-                }
-              }
-            }
-          }
-          instructions {
-            name: "all-reduce_torus-2d_reduce-scatter_conc_bidir-ring_root_2"
-            opcode: "null"
-            instruction_id: 21
-            operand_ids: 9
-            operand_ids: 15
-          }
-        }
-      }
-      instructions {
-        name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-0"
-        opcode: "reduce-scatter"
-        instruction_id: 22
-        bytes_out: 12
-        communication_groups {
-          group_ids: 0
-          group_ids: 2
-        }
-        operand_ids: 8
-        inner_subroutines {
-          name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-0_bidir-ring"
-          subroutine_root_id: 35
-          execution_probability: 1
-          execution_count: 1
-          instructions {
-            name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-0_bidir-ring_cw"
-            opcode: "reduce-scatter"
-            instruction_id: 23
-            bytes_out: 6
-            communication_groups {
-              group_ids: 0
-              group_ids: 2
-            }
-            inner_subroutines {
-              name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-0_bidir-ring_cw_unidir-ring"
-              subroutine_root_id: 25
-              execution_probability: 1
-              execution_count: 1
-              instructions {
-                name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-0_bidir-ring_cw_unidir-ring_sendrecv_1"
-                opcode: "sendrecv"
-                instruction_id: 24
+                instruction_id: 15
                 bytes_in: 3
                 bytes_out: 3
                 communication_groups {
-                  group_ids: 0
-                  group_ids: 0
+                  group_ids: 1
+                  group_ids: 3
                 }
+                operand_ids: 11
               }
               instructions {
-                name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-0_bidir-ring_cw_unidir-ring_reduction_1"
+                name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-0_bidir-ring_cw_unidir-ring_reduction_2"
                 opcode: "call"
-                instruction_id: 25
-                operand_ids: 24
+                instruction_id: 16
+                operand_ids: 15
                 inner_subroutines {
-                  name: "reduction_subroutine_phase_1"
-                  subroutine_root_id: 28
+                  name: "reduction_subroutine_phase_2"
+                  subroutine_root_id: 19
                   execution_probability: 1
                   execution_count: 1
                   instructions {
-                    name: "op1_phase_1"
+                    name: "op1_phase_2"
                     opcode: "delay"
-                    instruction_id: 26
+                    instruction_id: 17
                     bytes_out: 3
                   }
                   instructions {
-                    name: "op2_phase_1"
+                    name: "op2_phase_2"
                     opcode: "delay"
-                    instruction_id: 27
+                    instruction_id: 18
                     bytes_out: 3
                   }
                   instructions {
-                    name: "sum_phase_1"
+                    name: "sum_phase_2"
                     opcode: "delay"
-                    instruction_id: 28
+                    instruction_id: 19
                     ops: 6
-                    operand_ids: 26
-                    operand_ids: 27
+                    operand_ids: 17
+                    operand_ids: 18
+                  }
+                }
+              }
+              instructions {
+                name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-0_bidir-ring_cw_unidir-ring_sendrecv_3"
+                opcode: "sendrecv"
+                instruction_id: 20
+                bytes_in: 3
+                bytes_out: 3
+                communication_groups {
+                  group_ids: 1
+                  group_ids: 3
+                }
+                operand_ids: 16
+              }
+              instructions {
+                name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-0_bidir-ring_cw_unidir-ring_reduction_3"
+                opcode: "call"
+                instruction_id: 21
+                operand_ids: 20
+                inner_subroutines {
+                  name: "reduction_subroutine_phase_3"
+                  subroutine_root_id: 24
+                  execution_probability: 1
+                  execution_count: 1
+                  instructions {
+                    name: "op1_phase_3"
+                    opcode: "delay"
+                    instruction_id: 22
+                    bytes_out: 3
+                  }
+                  instructions {
+                    name: "op2_phase_3"
+                    opcode: "delay"
+                    instruction_id: 23
+                    bytes_out: 3
+                  }
+                  instructions {
+                    name: "sum_phase_3"
+                    opcode: "delay"
+                    instruction_id: 24
+                    ops: 6
+                    operand_ids: 22
+                    operand_ids: 23
                   }
                 }
               }
@@ -285,57 +235,147 @@ inner_subroutines {
           instructions {
             name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-0_bidir-ring_ccw"
             opcode: "reduce-scatter"
-            instruction_id: 29
-            bytes_out: 6
+            instruction_id: 25
+            bytes_out: 12
             communication_groups {
+              group_ids: 3
               group_ids: 2
+              group_ids: 1
               group_ids: 0
             }
             inner_subroutines {
               name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-0_bidir-ring_ccw_unidir-ring"
-              subroutine_root_id: 31
+              subroutine_root_id: 37
               execution_probability: 1
               execution_count: 1
               instructions {
                 name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-0_bidir-ring_ccw_unidir-ring_sendrecv_1"
                 opcode: "sendrecv"
-                instruction_id: 30
+                instruction_id: 26
                 bytes_in: 3
                 bytes_out: 3
                 communication_groups {
-                  group_ids: 0
-                  group_ids: 0
+                  group_ids: 3
+                  group_ids: 1
                 }
               }
               instructions {
                 name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-0_bidir-ring_ccw_unidir-ring_reduction_1"
                 opcode: "call"
-                instruction_id: 31
-                operand_ids: 30
+                instruction_id: 27
+                operand_ids: 26
                 inner_subroutines {
                   name: "reduction_subroutine_phase_1"
-                  subroutine_root_id: 34
+                  subroutine_root_id: 30
                   execution_probability: 1
                   execution_count: 1
                   instructions {
                     name: "op1_phase_1"
                     opcode: "delay"
-                    instruction_id: 32
+                    instruction_id: 28
                     bytes_out: 3
                   }
                   instructions {
                     name: "op2_phase_1"
                     opcode: "delay"
-                    instruction_id: 33
+                    instruction_id: 29
                     bytes_out: 3
                   }
                   instructions {
                     name: "sum_phase_1"
                     opcode: "delay"
-                    instruction_id: 34
+                    instruction_id: 30
                     ops: 6
-                    operand_ids: 32
+                    operand_ids: 28
+                    operand_ids: 29
+                  }
+                }
+              }
+              instructions {
+                name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-0_bidir-ring_ccw_unidir-ring_sendrecv_2"
+                opcode: "sendrecv"
+                instruction_id: 31
+                bytes_in: 3
+                bytes_out: 3
+                communication_groups {
+                  group_ids: 3
+                  group_ids: 1
+                }
+                operand_ids: 27
+              }
+              instructions {
+                name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-0_bidir-ring_ccw_unidir-ring_reduction_2"
+                opcode: "call"
+                instruction_id: 32
+                operand_ids: 31
+                inner_subroutines {
+                  name: "reduction_subroutine_phase_2"
+                  subroutine_root_id: 35
+                  execution_probability: 1
+                  execution_count: 1
+                  instructions {
+                    name: "op1_phase_2"
+                    opcode: "delay"
+                    instruction_id: 33
+                    bytes_out: 3
+                  }
+                  instructions {
+                    name: "op2_phase_2"
+                    opcode: "delay"
+                    instruction_id: 34
+                    bytes_out: 3
+                  }
+                  instructions {
+                    name: "sum_phase_2"
+                    opcode: "delay"
+                    instruction_id: 35
+                    ops: 6
                     operand_ids: 33
+                    operand_ids: 34
+                  }
+                }
+              }
+              instructions {
+                name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-0_bidir-ring_ccw_unidir-ring_sendrecv_3"
+                opcode: "sendrecv"
+                instruction_id: 36
+                bytes_in: 3
+                bytes_out: 3
+                communication_groups {
+                  group_ids: 3
+                  group_ids: 1
+                }
+                operand_ids: 32
+              }
+              instructions {
+                name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-0_bidir-ring_ccw_unidir-ring_reduction_3"
+                opcode: "call"
+                instruction_id: 37
+                operand_ids: 36
+                inner_subroutines {
+                  name: "reduction_subroutine_phase_3"
+                  subroutine_root_id: 40
+                  execution_probability: 1
+                  execution_count: 1
+                  instructions {
+                    name: "op1_phase_3"
+                    opcode: "delay"
+                    instruction_id: 38
+                    bytes_out: 3
+                  }
+                  instructions {
+                    name: "op2_phase_3"
+                    opcode: "delay"
+                    instruction_id: 39
+                    bytes_out: 3
+                  }
+                  instructions {
+                    name: "sum_phase_3"
+                    opcode: "delay"
+                    instruction_id: 40
+                    ops: 6
+                    operand_ids: 38
+                    operand_ids: 39
                   }
                 }
               }
@@ -344,31 +384,31 @@ inner_subroutines {
           instructions {
             name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-0_bidir-ring_root_2"
             opcode: "null"
-            instruction_id: 35
-            operand_ids: 23
-            operand_ids: 29
+            instruction_id: 41
+            operand_ids: 9
+            operand_ids: 25
           }
         }
       }
       instructions {
         name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-1"
         opcode: "reduce-scatter"
-        instruction_id: 36
+        instruction_id: 42
         bytes_out: 6
         communication_groups {
           group_ids: 2
           group_ids: 6
         }
-        operand_ids: 22
+        operand_ids: 8
         inner_subroutines {
           name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-1_bidir-ring"
-          subroutine_root_id: 49
+          subroutine_root_id: 55
           execution_probability: 1
           execution_count: 1
           instructions {
             name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-1_bidir-ring_cw"
             opcode: "reduce-scatter"
-            instruction_id: 37
+            instruction_id: 43
             bytes_out: 3
             communication_groups {
               group_ids: 2
@@ -376,70 +416,11 @@ inner_subroutines {
             }
             inner_subroutines {
               name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-1_bidir-ring_cw_unidir-ring"
-              subroutine_root_id: 39
-              execution_probability: 1
-              execution_count: 1
-              instructions {
-                name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-1_bidir-ring_cw_unidir-ring_sendrecv_1"
-                opcode: "sendrecv"
-                instruction_id: 38
-                bytes_in: 1.5
-                bytes_out: 1.5
-                communication_groups {
-                  group_ids: 6
-                  group_ids: 6
-                }
-              }
-              instructions {
-                name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-1_bidir-ring_cw_unidir-ring_reduction_1"
-                opcode: "call"
-                instruction_id: 39
-                operand_ids: 38
-                inner_subroutines {
-                  name: "reduction_subroutine_phase_1"
-                  subroutine_root_id: 42
-                  execution_probability: 1
-                  execution_count: 1
-                  instructions {
-                    name: "op1_phase_1"
-                    opcode: "delay"
-                    instruction_id: 40
-                    bytes_out: 1.5
-                  }
-                  instructions {
-                    name: "op2_phase_1"
-                    opcode: "delay"
-                    instruction_id: 41
-                    bytes_out: 1.5
-                  }
-                  instructions {
-                    name: "sum_phase_1"
-                    opcode: "delay"
-                    instruction_id: 42
-                    ops: 3
-                    operand_ids: 40
-                    operand_ids: 41
-                  }
-                }
-              }
-            }
-          }
-          instructions {
-            name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-1_bidir-ring_ccw"
-            opcode: "reduce-scatter"
-            instruction_id: 43
-            bytes_out: 3
-            communication_groups {
-              group_ids: 6
-              group_ids: 2
-            }
-            inner_subroutines {
-              name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-1_bidir-ring_ccw_unidir-ring"
               subroutine_root_id: 45
               execution_probability: 1
               execution_count: 1
               instructions {
-                name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-1_bidir-ring_ccw_unidir-ring_sendrecv_1"
+                name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-1_bidir-ring_cw_unidir-ring_sendrecv_1"
                 opcode: "sendrecv"
                 instruction_id: 44
                 bytes_in: 1.5
@@ -450,7 +431,7 @@ inner_subroutines {
                 }
               }
               instructions {
-                name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-1_bidir-ring_ccw_unidir-ring_reduction_1"
+                name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-1_bidir-ring_cw_unidir-ring_reduction_1"
                 opcode: "call"
                 instruction_id: 45
                 operand_ids: 44
@@ -484,115 +465,118 @@ inner_subroutines {
             }
           }
           instructions {
+            name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-1_bidir-ring_ccw"
+            opcode: "reduce-scatter"
+            instruction_id: 49
+            bytes_out: 3
+            communication_groups {
+              group_ids: 6
+              group_ids: 2
+            }
+            inner_subroutines {
+              name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-1_bidir-ring_ccw_unidir-ring"
+              subroutine_root_id: 51
+              execution_probability: 1
+              execution_count: 1
+              instructions {
+                name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-1_bidir-ring_ccw_unidir-ring_sendrecv_1"
+                opcode: "sendrecv"
+                instruction_id: 50
+                bytes_in: 1.5
+                bytes_out: 1.5
+                communication_groups {
+                  group_ids: 6
+                  group_ids: 6
+                }
+              }
+              instructions {
+                name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-1_bidir-ring_ccw_unidir-ring_reduction_1"
+                opcode: "call"
+                instruction_id: 51
+                operand_ids: 50
+                inner_subroutines {
+                  name: "reduction_subroutine_phase_1"
+                  subroutine_root_id: 54
+                  execution_probability: 1
+                  execution_count: 1
+                  instructions {
+                    name: "op1_phase_1"
+                    opcode: "delay"
+                    instruction_id: 52
+                    bytes_out: 1.5
+                  }
+                  instructions {
+                    name: "op2_phase_1"
+                    opcode: "delay"
+                    instruction_id: 53
+                    bytes_out: 1.5
+                  }
+                  instructions {
+                    name: "sum_phase_1"
+                    opcode: "delay"
+                    instruction_id: 54
+                    ops: 3
+                    operand_ids: 52
+                    operand_ids: 53
+                  }
+                }
+              }
+            }
+          }
+          instructions {
             name: "all-reduce_torus-2d_reduce-scatter_stream-0_stage-1_bidir-ring_root_2"
             opcode: "null"
-            instruction_id: 49
-            operand_ids: 37
+            instruction_id: 55
             operand_ids: 43
+            operand_ids: 49
           }
         }
       }
       instructions {
         name: "all-reduce_torus-2d_reduce-scatter_stream-1_stage-0"
         opcode: "reduce-scatter"
-        instruction_id: 50
-        bytes_out: 12
+        instruction_id: 56
+        bytes_out: 24
         communication_groups {
           group_ids: 2
+          group_ids: 3
           group_ids: 6
+          group_ids: 7
         }
-        operand_ids: 8
         inner_subroutines {
           name: "all-reduce_torus-2d_reduce-scatter_stream-1_stage-0_bidir-ring"
-          subroutine_root_id: 63
+          subroutine_root_id: 89
           execution_probability: 1
           execution_count: 1
           instructions {
             name: "all-reduce_torus-2d_reduce-scatter_stream-1_stage-0_bidir-ring_cw"
             opcode: "reduce-scatter"
-            instruction_id: 51
-            bytes_out: 6
+            instruction_id: 57
+            bytes_out: 12
             communication_groups {
               group_ids: 2
+              group_ids: 3
               group_ids: 6
+              group_ids: 7
             }
             inner_subroutines {
               name: "all-reduce_torus-2d_reduce-scatter_stream-1_stage-0_bidir-ring_cw_unidir-ring"
-              subroutine_root_id: 53
+              subroutine_root_id: 69
               execution_probability: 1
               execution_count: 1
               instructions {
                 name: "all-reduce_torus-2d_reduce-scatter_stream-1_stage-0_bidir-ring_cw_unidir-ring_sendrecv_1"
                 opcode: "sendrecv"
-                instruction_id: 52
-                bytes_in: 3
-                bytes_out: 3
-                communication_groups {
-                  group_ids: 6
-                  group_ids: 6
-                }
-              }
-              instructions {
-                name: "all-reduce_torus-2d_reduce-scatter_stream-1_stage-0_bidir-ring_cw_unidir-ring_reduction_1"
-                opcode: "call"
-                instruction_id: 53
-                operand_ids: 52
-                inner_subroutines {
-                  name: "reduction_subroutine_phase_1"
-                  subroutine_root_id: 56
-                  execution_probability: 1
-                  execution_count: 1
-                  instructions {
-                    name: "op1_phase_1"
-                    opcode: "delay"
-                    instruction_id: 54
-                    bytes_out: 3
-                  }
-                  instructions {
-                    name: "op2_phase_1"
-                    opcode: "delay"
-                    instruction_id: 55
-                    bytes_out: 3
-                  }
-                  instructions {
-                    name: "sum_phase_1"
-                    opcode: "delay"
-                    instruction_id: 56
-                    ops: 6
-                    operand_ids: 54
-                    operand_ids: 55
-                  }
-                }
-              }
-            }
-          }
-          instructions {
-            name: "all-reduce_torus-2d_reduce-scatter_stream-1_stage-0_bidir-ring_ccw"
-            opcode: "reduce-scatter"
-            instruction_id: 57
-            bytes_out: 6
-            communication_groups {
-              group_ids: 6
-              group_ids: 2
-            }
-            inner_subroutines {
-              name: "all-reduce_torus-2d_reduce-scatter_stream-1_stage-0_bidir-ring_ccw_unidir-ring"
-              subroutine_root_id: 59
-              execution_probability: 1
-              execution_count: 1
-              instructions {
-                name: "all-reduce_torus-2d_reduce-scatter_stream-1_stage-0_bidir-ring_ccw_unidir-ring_sendrecv_1"
-                opcode: "sendrecv"
                 instruction_id: 58
                 bytes_in: 3
                 bytes_out: 3
                 communication_groups {
-                  group_ids: 6
-                  group_ids: 6
+                  group_ids: 7
+                  group_ids: 3
                 }
               }
               instructions {
-                name: "all-reduce_torus-2d_reduce-scatter_stream-1_stage-0_bidir-ring_ccw_unidir-ring_reduction_1"
+                name: "all-reduce_torus-2d_reduce-scatter_stream-1_stage-0_bidir-ring_cw_unidir-ring_reduction_1"
                 opcode: "call"
                 instruction_id: 59
                 operand_ids: 58
@@ -623,36 +607,273 @@ inner_subroutines {
                   }
                 }
               }
+              instructions {
+                name: "all-reduce_torus-2d_reduce-scatter_stream-1_stage-0_bidir-ring_cw_unidir-ring_sendrecv_2"
+                opcode: "sendrecv"
+                instruction_id: 63
+                bytes_in: 3
+                bytes_out: 3
+                communication_groups {
+                  group_ids: 7
+                  group_ids: 3
+                }
+                operand_ids: 59
+              }
+              instructions {
+                name: "all-reduce_torus-2d_reduce-scatter_stream-1_stage-0_bidir-ring_cw_unidir-ring_reduction_2"
+                opcode: "call"
+                instruction_id: 64
+                operand_ids: 63
+                inner_subroutines {
+                  name: "reduction_subroutine_phase_2"
+                  subroutine_root_id: 67
+                  execution_probability: 1
+                  execution_count: 1
+                  instructions {
+                    name: "op1_phase_2"
+                    opcode: "delay"
+                    instruction_id: 65
+                    bytes_out: 3
+                  }
+                  instructions {
+                    name: "op2_phase_2"
+                    opcode: "delay"
+                    instruction_id: 66
+                    bytes_out: 3
+                  }
+                  instructions {
+                    name: "sum_phase_2"
+                    opcode: "delay"
+                    instruction_id: 67
+                    ops: 6
+                    operand_ids: 65
+                    operand_ids: 66
+                  }
+                }
+              }
+              instructions {
+                name: "all-reduce_torus-2d_reduce-scatter_stream-1_stage-0_bidir-ring_cw_unidir-ring_sendrecv_3"
+                opcode: "sendrecv"
+                instruction_id: 68
+                bytes_in: 3
+                bytes_out: 3
+                communication_groups {
+                  group_ids: 7
+                  group_ids: 3
+                }
+                operand_ids: 64
+              }
+              instructions {
+                name: "all-reduce_torus-2d_reduce-scatter_stream-1_stage-0_bidir-ring_cw_unidir-ring_reduction_3"
+                opcode: "call"
+                instruction_id: 69
+                operand_ids: 68
+                inner_subroutines {
+                  name: "reduction_subroutine_phase_3"
+                  subroutine_root_id: 72
+                  execution_probability: 1
+                  execution_count: 1
+                  instructions {
+                    name: "op1_phase_3"
+                    opcode: "delay"
+                    instruction_id: 70
+                    bytes_out: 3
+                  }
+                  instructions {
+                    name: "op2_phase_3"
+                    opcode: "delay"
+                    instruction_id: 71
+                    bytes_out: 3
+                  }
+                  instructions {
+                    name: "sum_phase_3"
+                    opcode: "delay"
+                    instruction_id: 72
+                    ops: 6
+                    operand_ids: 70
+                    operand_ids: 71
+                  }
+                }
+              }
+            }
+          }
+          instructions {
+            name: "all-reduce_torus-2d_reduce-scatter_stream-1_stage-0_bidir-ring_ccw"
+            opcode: "reduce-scatter"
+            instruction_id: 73
+            bytes_out: 12
+            communication_groups {
+              group_ids: 7
+              group_ids: 6
+              group_ids: 3
+              group_ids: 2
+            }
+            inner_subroutines {
+              name: "all-reduce_torus-2d_reduce-scatter_stream-1_stage-0_bidir-ring_ccw_unidir-ring"
+              subroutine_root_id: 85
+              execution_probability: 1
+              execution_count: 1
+              instructions {
+                name: "all-reduce_torus-2d_reduce-scatter_stream-1_stage-0_bidir-ring_ccw_unidir-ring_sendrecv_1"
+                opcode: "sendrecv"
+                instruction_id: 74
+                bytes_in: 3
+                bytes_out: 3
+                communication_groups {
+                  group_ids: 3
+                  group_ids: 7
+                }
+              }
+              instructions {
+                name: "all-reduce_torus-2d_reduce-scatter_stream-1_stage-0_bidir-ring_ccw_unidir-ring_reduction_1"
+                opcode: "call"
+                instruction_id: 75
+                operand_ids: 74
+                inner_subroutines {
+                  name: "reduction_subroutine_phase_1"
+                  subroutine_root_id: 78
+                  execution_probability: 1
+                  execution_count: 1
+                  instructions {
+                    name: "op1_phase_1"
+                    opcode: "delay"
+                    instruction_id: 76
+                    bytes_out: 3
+                  }
+                  instructions {
+                    name: "op2_phase_1"
+                    opcode: "delay"
+                    instruction_id: 77
+                    bytes_out: 3
+                  }
+                  instructions {
+                    name: "sum_phase_1"
+                    opcode: "delay"
+                    instruction_id: 78
+                    ops: 6
+                    operand_ids: 76
+                    operand_ids: 77
+                  }
+                }
+              }
+              instructions {
+                name: "all-reduce_torus-2d_reduce-scatter_stream-1_stage-0_bidir-ring_ccw_unidir-ring_sendrecv_2"
+                opcode: "sendrecv"
+                instruction_id: 79
+                bytes_in: 3
+                bytes_out: 3
+                communication_groups {
+                  group_ids: 3
+                  group_ids: 7
+                }
+                operand_ids: 75
+              }
+              instructions {
+                name: "all-reduce_torus-2d_reduce-scatter_stream-1_stage-0_bidir-ring_ccw_unidir-ring_reduction_2"
+                opcode: "call"
+                instruction_id: 80
+                operand_ids: 79
+                inner_subroutines {
+                  name: "reduction_subroutine_phase_2"
+                  subroutine_root_id: 83
+                  execution_probability: 1
+                  execution_count: 1
+                  instructions {
+                    name: "op1_phase_2"
+                    opcode: "delay"
+                    instruction_id: 81
+                    bytes_out: 3
+                  }
+                  instructions {
+                    name: "op2_phase_2"
+                    opcode: "delay"
+                    instruction_id: 82
+                    bytes_out: 3
+                  }
+                  instructions {
+                    name: "sum_phase_2"
+                    opcode: "delay"
+                    instruction_id: 83
+                    ops: 6
+                    operand_ids: 81
+                    operand_ids: 82
+                  }
+                }
+              }
+              instructions {
+                name: "all-reduce_torus-2d_reduce-scatter_stream-1_stage-0_bidir-ring_ccw_unidir-ring_sendrecv_3"
+                opcode: "sendrecv"
+                instruction_id: 84
+                bytes_in: 3
+                bytes_out: 3
+                communication_groups {
+                  group_ids: 3
+                  group_ids: 7
+                }
+                operand_ids: 80
+              }
+              instructions {
+                name: "all-reduce_torus-2d_reduce-scatter_stream-1_stage-0_bidir-ring_ccw_unidir-ring_reduction_3"
+                opcode: "call"
+                instruction_id: 85
+                operand_ids: 84
+                inner_subroutines {
+                  name: "reduction_subroutine_phase_3"
+                  subroutine_root_id: 88
+                  execution_probability: 1
+                  execution_count: 1
+                  instructions {
+                    name: "op1_phase_3"
+                    opcode: "delay"
+                    instruction_id: 86
+                    bytes_out: 3
+                  }
+                  instructions {
+                    name: "op2_phase_3"
+                    opcode: "delay"
+                    instruction_id: 87
+                    bytes_out: 3
+                  }
+                  instructions {
+                    name: "sum_phase_3"
+                    opcode: "delay"
+                    instruction_id: 88
+                    ops: 6
+                    operand_ids: 86
+                    operand_ids: 87
+                  }
+                }
+              }
             }
           }
           instructions {
             name: "all-reduce_torus-2d_reduce-scatter_stream-1_stage-0_bidir-ring_root_2"
             opcode: "null"
-            instruction_id: 63
-            operand_ids: 51
+            instruction_id: 89
             operand_ids: 57
+            operand_ids: 73
           }
         }
       }
       instructions {
         name: "all-reduce_torus-2d_reduce-scatter_stream-1_stage-1"
         opcode: "reduce-scatter"
-        instruction_id: 64
+        instruction_id: 90
         bytes_out: 6
         communication_groups {
           group_ids: 0
           group_ids: 2
         }
-        operand_ids: 50
+        operand_ids: 56
         inner_subroutines {
           name: "all-reduce_torus-2d_reduce-scatter_stream-1_stage-1_bidir-ring"
-          subroutine_root_id: 77
+          subroutine_root_id: 103
           execution_probability: 1
           execution_count: 1
           instructions {
             name: "all-reduce_torus-2d_reduce-scatter_stream-1_stage-1_bidir-ring_cw"
             opcode: "reduce-scatter"
-            instruction_id: 65
+            instruction_id: 91
             bytes_out: 3
             communication_groups {
               group_ids: 0
@@ -660,13 +881,13 @@ inner_subroutines {
             }
             inner_subroutines {
               name: "all-reduce_torus-2d_reduce-scatter_stream-1_stage-1_bidir-ring_cw_unidir-ring"
-              subroutine_root_id: 67
+              subroutine_root_id: 93
               execution_probability: 1
               execution_count: 1
               instructions {
                 name: "all-reduce_torus-2d_reduce-scatter_stream-1_stage-1_bidir-ring_cw_unidir-ring_sendrecv_1"
                 opcode: "sendrecv"
-                instruction_id: 66
+                instruction_id: 92
                 bytes_in: 1.5
                 bytes_out: 1.5
                 communication_groups {
@@ -677,32 +898,32 @@ inner_subroutines {
               instructions {
                 name: "all-reduce_torus-2d_reduce-scatter_stream-1_stage-1_bidir-ring_cw_unidir-ring_reduction_1"
                 opcode: "call"
-                instruction_id: 67
-                operand_ids: 66
+                instruction_id: 93
+                operand_ids: 92
                 inner_subroutines {
                   name: "reduction_subroutine_phase_1"
-                  subroutine_root_id: 70
+                  subroutine_root_id: 96
                   execution_probability: 1
                   execution_count: 1
                   instructions {
                     name: "op1_phase_1"
                     opcode: "delay"
-                    instruction_id: 68
+                    instruction_id: 94
                     bytes_out: 1.5
                   }
                   instructions {
                     name: "op2_phase_1"
                     opcode: "delay"
-                    instruction_id: 69
+                    instruction_id: 95
                     bytes_out: 1.5
                   }
                   instructions {
                     name: "sum_phase_1"
                     opcode: "delay"
-                    instruction_id: 70
+                    instruction_id: 96
                     ops: 3
-                    operand_ids: 68
-                    operand_ids: 69
+                    operand_ids: 94
+                    operand_ids: 95
                   }
                 }
               }
@@ -711,7 +932,7 @@ inner_subroutines {
           instructions {
             name: "all-reduce_torus-2d_reduce-scatter_stream-1_stage-1_bidir-ring_ccw"
             opcode: "reduce-scatter"
-            instruction_id: 71
+            instruction_id: 97
             bytes_out: 3
             communication_groups {
               group_ids: 2
@@ -719,13 +940,13 @@ inner_subroutines {
             }
             inner_subroutines {
               name: "all-reduce_torus-2d_reduce-scatter_stream-1_stage-1_bidir-ring_ccw_unidir-ring"
-              subroutine_root_id: 73
+              subroutine_root_id: 99
               execution_probability: 1
               execution_count: 1
               instructions {
                 name: "all-reduce_torus-2d_reduce-scatter_stream-1_stage-1_bidir-ring_ccw_unidir-ring_sendrecv_1"
                 opcode: "sendrecv"
-                instruction_id: 72
+                instruction_id: 98
                 bytes_in: 1.5
                 bytes_out: 1.5
                 communication_groups {
@@ -736,32 +957,32 @@ inner_subroutines {
               instructions {
                 name: "all-reduce_torus-2d_reduce-scatter_stream-1_stage-1_bidir-ring_ccw_unidir-ring_reduction_1"
                 opcode: "call"
-                instruction_id: 73
-                operand_ids: 72
+                instruction_id: 99
+                operand_ids: 98
                 inner_subroutines {
                   name: "reduction_subroutine_phase_1"
-                  subroutine_root_id: 76
+                  subroutine_root_id: 102
                   execution_probability: 1
                   execution_count: 1
                   instructions {
                     name: "op1_phase_1"
                     opcode: "delay"
-                    instruction_id: 74
+                    instruction_id: 100
                     bytes_out: 1.5
                   }
                   instructions {
                     name: "op2_phase_1"
                     opcode: "delay"
-                    instruction_id: 75
+                    instruction_id: 101
                     bytes_out: 1.5
                   }
                   instructions {
                     name: "sum_phase_1"
                     opcode: "delay"
-                    instruction_id: 76
+                    instruction_id: 102
                     ops: 3
-                    operand_ids: 74
-                    operand_ids: 75
+                    operand_ids: 100
+                    operand_ids: 101
                   }
                 }
               }
@@ -770,25 +991,25 @@ inner_subroutines {
           instructions {
             name: "all-reduce_torus-2d_reduce-scatter_stream-1_stage-1_bidir-ring_root_2"
             opcode: "null"
-            instruction_id: 77
-            operand_ids: 65
-            operand_ids: 71
+            instruction_id: 103
+            operand_ids: 91
+            operand_ids: 97
           }
         }
       }
       instructions {
         name: "all-reduce_torus-2d_reduce-scatter_root"
         opcode: "null"
-        instruction_id: 78
-        operand_ids: 36
-        operand_ids: 64
+        instruction_id: 104
+        operand_ids: 42
+        operand_ids: 90
       }
     }
   }
   instructions {
     name: "all-reduce_torus-2d_all-gather"
     opcode: "all-gather"
-    instruction_id: 79
+    instruction_id: 105
     bytes_out: 48
     communication_groups {
       group_ids: 0
@@ -803,13 +1024,13 @@ inner_subroutines {
     operand_ids: 7
     inner_subroutines {
       name: "all-reduce_torus-2d_all-gather_torus-2d"
-      subroutine_root_id: 104
+      subroutine_root_id: 138
       execution_probability: 1
       execution_count: 1
       instructions {
         name: "all-reduce_torus-2d_all-gather_stream-0_stage-0"
         opcode: "all-gather"
-        instruction_id: 80
+        instruction_id: 106
         bytes_out: 6
         communication_groups {
           group_ids: 0
@@ -817,13 +1038,13 @@ inner_subroutines {
         }
         inner_subroutines {
           name: "all-reduce_torus-2d_all-gather_stream-0_stage-0_bidir-ring"
-          subroutine_root_id: 85
+          subroutine_root_id: 111
           execution_probability: 1
           execution_count: 1
           instructions {
             name: "all-reduce_torus-2d_all-gather_stream-0_stage-0_bidir-ring_cw"
             opcode: "all-gather"
-            instruction_id: 81
+            instruction_id: 107
             bytes_out: 3
             communication_groups {
               group_ids: 0
@@ -831,13 +1052,13 @@ inner_subroutines {
             }
             inner_subroutines {
               name: "all-reduce_torus-2d_all-gather_stream-0_stage-0_bidir-ring_cw_unidir-ring"
-              subroutine_root_id: 82
+              subroutine_root_id: 108
               execution_probability: 1
               execution_count: 1
               instructions {
                 name: "all-reduce_torus-2d_all-gather_stream-0_stage-0_bidir-ring_cw_unidir-ring_sendrecv_1"
                 opcode: "sendrecv"
-                instruction_id: 82
+                instruction_id: 108
                 bytes_in: 1.5
                 bytes_out: 1.5
                 communication_groups {
@@ -850,7 +1071,7 @@ inner_subroutines {
           instructions {
             name: "all-reduce_torus-2d_all-gather_stream-0_stage-0_bidir-ring_ccw"
             opcode: "all-gather"
-            instruction_id: 83
+            instruction_id: 109
             bytes_out: 3
             communication_groups {
               group_ids: 2
@@ -858,13 +1079,13 @@ inner_subroutines {
             }
             inner_subroutines {
               name: "all-reduce_torus-2d_all-gather_stream-0_stage-0_bidir-ring_ccw_unidir-ring"
-              subroutine_root_id: 84
+              subroutine_root_id: 110
               execution_probability: 1
               execution_count: 1
               instructions {
                 name: "all-reduce_torus-2d_all-gather_stream-0_stage-0_bidir-ring_ccw_unidir-ring_sendrecv_1"
                 opcode: "sendrecv"
-                instruction_id: 84
+                instruction_id: 110
                 bytes_in: 1.5
                 bytes_out: 1.5
                 communication_groups {
@@ -877,94 +1098,148 @@ inner_subroutines {
           instructions {
             name: "all-reduce_torus-2d_all-gather_stream-0_stage-0_bidir-ring_root_2"
             opcode: "null"
-            instruction_id: 85
-            operand_ids: 81
-            operand_ids: 83
+            instruction_id: 111
+            operand_ids: 107
+            operand_ids: 109
           }
         }
       }
       instructions {
         name: "all-reduce_torus-2d_all-gather_stream-0_stage-1"
         opcode: "all-gather"
-        instruction_id: 86
-        bytes_out: 12
+        instruction_id: 112
+        bytes_out: 24
         communication_groups {
           group_ids: 2
+          group_ids: 3
           group_ids: 6
+          group_ids: 7
         }
-        operand_ids: 80
+        operand_ids: 106
         inner_subroutines {
           name: "all-reduce_torus-2d_all-gather_stream-0_stage-1_bidir-ring"
-          subroutine_root_id: 91
+          subroutine_root_id: 121
           execution_probability: 1
           execution_count: 1
           instructions {
             name: "all-reduce_torus-2d_all-gather_stream-0_stage-1_bidir-ring_cw"
             opcode: "all-gather"
-            instruction_id: 87
-            bytes_out: 6
+            instruction_id: 113
+            bytes_out: 12
             communication_groups {
               group_ids: 2
+              group_ids: 3
               group_ids: 6
+              group_ids: 7
             }
             inner_subroutines {
               name: "all-reduce_torus-2d_all-gather_stream-0_stage-1_bidir-ring_cw_unidir-ring"
-              subroutine_root_id: 88
+              subroutine_root_id: 116
               execution_probability: 1
               execution_count: 1
               instructions {
                 name: "all-reduce_torus-2d_all-gather_stream-0_stage-1_bidir-ring_cw_unidir-ring_sendrecv_1"
                 opcode: "sendrecv"
-                instruction_id: 88
+                instruction_id: 114
                 bytes_in: 3
                 bytes_out: 3
                 communication_groups {
-                  group_ids: 6
-                  group_ids: 6
+                  group_ids: 7
+                  group_ids: 3
                 }
+              }
+              instructions {
+                name: "all-reduce_torus-2d_all-gather_stream-0_stage-1_bidir-ring_cw_unidir-ring_sendrecv_2"
+                opcode: "sendrecv"
+                instruction_id: 115
+                bytes_in: 3
+                bytes_out: 3
+                communication_groups {
+                  group_ids: 7
+                  group_ids: 3
+                }
+                operand_ids: 114
+              }
+              instructions {
+                name: "all-reduce_torus-2d_all-gather_stream-0_stage-1_bidir-ring_cw_unidir-ring_sendrecv_3"
+                opcode: "sendrecv"
+                instruction_id: 116
+                bytes_in: 3
+                bytes_out: 3
+                communication_groups {
+                  group_ids: 7
+                  group_ids: 3
+                }
+                operand_ids: 115
               }
             }
           }
           instructions {
             name: "all-reduce_torus-2d_all-gather_stream-0_stage-1_bidir-ring_ccw"
             opcode: "all-gather"
-            instruction_id: 89
-            bytes_out: 6
+            instruction_id: 117
+            bytes_out: 12
             communication_groups {
+              group_ids: 7
               group_ids: 6
+              group_ids: 3
               group_ids: 2
             }
             inner_subroutines {
               name: "all-reduce_torus-2d_all-gather_stream-0_stage-1_bidir-ring_ccw_unidir-ring"
-              subroutine_root_id: 90
+              subroutine_root_id: 120
               execution_probability: 1
               execution_count: 1
               instructions {
                 name: "all-reduce_torus-2d_all-gather_stream-0_stage-1_bidir-ring_ccw_unidir-ring_sendrecv_1"
                 opcode: "sendrecv"
-                instruction_id: 90
+                instruction_id: 118
                 bytes_in: 3
                 bytes_out: 3
                 communication_groups {
-                  group_ids: 6
-                  group_ids: 6
+                  group_ids: 3
+                  group_ids: 7
                 }
+              }
+              instructions {
+                name: "all-reduce_torus-2d_all-gather_stream-0_stage-1_bidir-ring_ccw_unidir-ring_sendrecv_2"
+                opcode: "sendrecv"
+                instruction_id: 119
+                bytes_in: 3
+                bytes_out: 3
+                communication_groups {
+                  group_ids: 3
+                  group_ids: 7
+                }
+                operand_ids: 118
+              }
+              instructions {
+                name: "all-reduce_torus-2d_all-gather_stream-0_stage-1_bidir-ring_ccw_unidir-ring_sendrecv_3"
+                opcode: "sendrecv"
+                instruction_id: 120
+                bytes_in: 3
+                bytes_out: 3
+                communication_groups {
+                  group_ids: 3
+                  group_ids: 7
+                }
+                operand_ids: 119
               }
             }
           }
           instructions {
             name: "all-reduce_torus-2d_all-gather_stream-0_stage-1_bidir-ring_root_2"
             opcode: "null"
-            instruction_id: 91
-            operand_ids: 87
-            operand_ids: 89
+            instruction_id: 121
+            operand_ids: 113
+            operand_ids: 117
           }
         }
       }
       instructions {
         name: "all-reduce_torus-2d_all-gather_stream-1_stage-0"
         opcode: "all-gather"
-        instruction_id: 92
+        instruction_id: 122
         bytes_out: 6
         communication_groups {
           group_ids: 2
@@ -972,13 +1247,13 @@ inner_subroutines {
         }
         inner_subroutines {
           name: "all-reduce_torus-2d_all-gather_stream-1_stage-0_bidir-ring"
-          subroutine_root_id: 97
+          subroutine_root_id: 127
           execution_probability: 1
           execution_count: 1
           instructions {
             name: "all-reduce_torus-2d_all-gather_stream-1_stage-0_bidir-ring_cw"
             opcode: "all-gather"
-            instruction_id: 93
+            instruction_id: 123
             bytes_out: 3
             communication_groups {
               group_ids: 2
@@ -986,13 +1261,13 @@ inner_subroutines {
             }
             inner_subroutines {
               name: "all-reduce_torus-2d_all-gather_stream-1_stage-0_bidir-ring_cw_unidir-ring"
-              subroutine_root_id: 94
+              subroutine_root_id: 124
               execution_probability: 1
               execution_count: 1
               instructions {
                 name: "all-reduce_torus-2d_all-gather_stream-1_stage-0_bidir-ring_cw_unidir-ring_sendrecv_1"
                 opcode: "sendrecv"
-                instruction_id: 94
+                instruction_id: 124
                 bytes_in: 1.5
                 bytes_out: 1.5
                 communication_groups {
@@ -1005,7 +1280,7 @@ inner_subroutines {
           instructions {
             name: "all-reduce_torus-2d_all-gather_stream-1_stage-0_bidir-ring_ccw"
             opcode: "all-gather"
-            instruction_id: 95
+            instruction_id: 125
             bytes_out: 3
             communication_groups {
               group_ids: 6
@@ -1013,13 +1288,13 @@ inner_subroutines {
             }
             inner_subroutines {
               name: "all-reduce_torus-2d_all-gather_stream-1_stage-0_bidir-ring_ccw_unidir-ring"
-              subroutine_root_id: 96
+              subroutine_root_id: 126
               execution_probability: 1
               execution_count: 1
               instructions {
                 name: "all-reduce_torus-2d_all-gather_stream-1_stage-0_bidir-ring_ccw_unidir-ring_sendrecv_1"
                 opcode: "sendrecv"
-                instruction_id: 96
+                instruction_id: 126
                 bytes_in: 1.5
                 bytes_out: 1.5
                 communication_groups {
@@ -1032,168 +1307,150 @@ inner_subroutines {
           instructions {
             name: "all-reduce_torus-2d_all-gather_stream-1_stage-0_bidir-ring_root_2"
             opcode: "null"
-            instruction_id: 97
-            operand_ids: 93
-            operand_ids: 95
+            instruction_id: 127
+            operand_ids: 123
+            operand_ids: 125
           }
         }
       }
       instructions {
         name: "all-reduce_torus-2d_all-gather_stream-1_stage-1"
         opcode: "all-gather"
-        instruction_id: 98
-        bytes_out: 12
+        instruction_id: 128
+        bytes_out: 24
         communication_groups {
           group_ids: 0
+          group_ids: 1
           group_ids: 2
+          group_ids: 3
         }
-        operand_ids: 92
+        operand_ids: 122
         inner_subroutines {
           name: "all-reduce_torus-2d_all-gather_stream-1_stage-1_bidir-ring"
-          subroutine_root_id: 103
+          subroutine_root_id: 137
           execution_probability: 1
           execution_count: 1
           instructions {
             name: "all-reduce_torus-2d_all-gather_stream-1_stage-1_bidir-ring_cw"
             opcode: "all-gather"
-            instruction_id: 99
-            bytes_out: 6
+            instruction_id: 129
+            bytes_out: 12
             communication_groups {
               group_ids: 0
+              group_ids: 1
               group_ids: 2
+              group_ids: 3
             }
             inner_subroutines {
               name: "all-reduce_torus-2d_all-gather_stream-1_stage-1_bidir-ring_cw_unidir-ring"
-              subroutine_root_id: 100
+              subroutine_root_id: 132
               execution_probability: 1
               execution_count: 1
               instructions {
                 name: "all-reduce_torus-2d_all-gather_stream-1_stage-1_bidir-ring_cw_unidir-ring_sendrecv_1"
                 opcode: "sendrecv"
-                instruction_id: 100
+                instruction_id: 130
                 bytes_in: 3
                 bytes_out: 3
                 communication_groups {
-                  group_ids: 0
-                  group_ids: 0
+                  group_ids: 1
+                  group_ids: 3
                 }
+              }
+              instructions {
+                name: "all-reduce_torus-2d_all-gather_stream-1_stage-1_bidir-ring_cw_unidir-ring_sendrecv_2"
+                opcode: "sendrecv"
+                instruction_id: 131
+                bytes_in: 3
+                bytes_out: 3
+                communication_groups {
+                  group_ids: 1
+                  group_ids: 3
+                }
+                operand_ids: 130
+              }
+              instructions {
+                name: "all-reduce_torus-2d_all-gather_stream-1_stage-1_bidir-ring_cw_unidir-ring_sendrecv_3"
+                opcode: "sendrecv"
+                instruction_id: 132
+                bytes_in: 3
+                bytes_out: 3
+                communication_groups {
+                  group_ids: 1
+                  group_ids: 3
+                }
+                operand_ids: 131
               }
             }
           }
           instructions {
             name: "all-reduce_torus-2d_all-gather_stream-1_stage-1_bidir-ring_ccw"
             opcode: "all-gather"
-            instruction_id: 101
-            bytes_out: 6
+            instruction_id: 133
+            bytes_out: 12
             communication_groups {
+              group_ids: 3
               group_ids: 2
+              group_ids: 1
               group_ids: 0
             }
             inner_subroutines {
               name: "all-reduce_torus-2d_all-gather_stream-1_stage-1_bidir-ring_ccw_unidir-ring"
-              subroutine_root_id: 102
+              subroutine_root_id: 136
               execution_probability: 1
               execution_count: 1
               instructions {
                 name: "all-reduce_torus-2d_all-gather_stream-1_stage-1_bidir-ring_ccw_unidir-ring_sendrecv_1"
                 opcode: "sendrecv"
-                instruction_id: 102
+                instruction_id: 134
                 bytes_in: 3
                 bytes_out: 3
                 communication_groups {
-                  group_ids: 0
-                  group_ids: 0
+                  group_ids: 3
+                  group_ids: 1
                 }
+              }
+              instructions {
+                name: "all-reduce_torus-2d_all-gather_stream-1_stage-1_bidir-ring_ccw_unidir-ring_sendrecv_2"
+                opcode: "sendrecv"
+                instruction_id: 135
+                bytes_in: 3
+                bytes_out: 3
+                communication_groups {
+                  group_ids: 3
+                  group_ids: 1
+                }
+                operand_ids: 134
+              }
+              instructions {
+                name: "all-reduce_torus-2d_all-gather_stream-1_stage-1_bidir-ring_ccw_unidir-ring_sendrecv_3"
+                opcode: "sendrecv"
+                instruction_id: 136
+                bytes_in: 3
+                bytes_out: 3
+                communication_groups {
+                  group_ids: 3
+                  group_ids: 1
+                }
+                operand_ids: 135
               }
             }
           }
           instructions {
             name: "all-reduce_torus-2d_all-gather_stream-1_stage-1_bidir-ring_root_2"
             opcode: "null"
-            instruction_id: 103
-            operand_ids: 99
-            operand_ids: 101
+            instruction_id: 137
+            operand_ids: 129
+            operand_ids: 133
           }
         }
       }
       instructions {
-        name: "all-reduce_torus-2d_all-gather_conc"
-        opcode: "all-gather"
-        instruction_id: 104
-        bytes_out: 48
-        communication_groups {
-          group_ids: 2
-          group_ids: 3
-        }
-        operand_ids: 86
-        operand_ids: 98
-        inner_subroutines {
-          name: "all-reduce_torus-2d_all-gather_conc_bidir-ring"
-          subroutine_root_id: 109
-          execution_probability: 1
-          execution_count: 1
-          instructions {
-            name: "all-reduce_torus-2d_all-gather_conc_bidir-ring_cw"
-            opcode: "all-gather"
-            instruction_id: 105
-            bytes_out: 24
-            communication_groups {
-              group_ids: 2
-              group_ids: 3
-            }
-            inner_subroutines {
-              name: "all-reduce_torus-2d_all-gather_conc_bidir-ring_cw_unidir-ring"
-              subroutine_root_id: 106
-              execution_probability: 1
-              execution_count: 1
-              instructions {
-                name: "all-reduce_torus-2d_all-gather_conc_bidir-ring_cw_unidir-ring_sendrecv_1"
-                opcode: "sendrecv"
-                instruction_id: 106
-                bytes_in: 12
-                bytes_out: 12
-                communication_groups {
-                  group_ids: 3
-                  group_ids: 3
-                }
-              }
-            }
-          }
-          instructions {
-            name: "all-reduce_torus-2d_all-gather_conc_bidir-ring_ccw"
-            opcode: "all-gather"
-            instruction_id: 107
-            bytes_out: 24
-            communication_groups {
-              group_ids: 3
-              group_ids: 2
-            }
-            inner_subroutines {
-              name: "all-reduce_torus-2d_all-gather_conc_bidir-ring_ccw_unidir-ring"
-              subroutine_root_id: 108
-              execution_probability: 1
-              execution_count: 1
-              instructions {
-                name: "all-reduce_torus-2d_all-gather_conc_bidir-ring_ccw_unidir-ring_sendrecv_1"
-                opcode: "sendrecv"
-                instruction_id: 108
-                bytes_in: 12
-                bytes_out: 12
-                communication_groups {
-                  group_ids: 3
-                  group_ids: 3
-                }
-              }
-            }
-          }
-          instructions {
-            name: "all-reduce_torus-2d_all-gather_conc_bidir-ring_root_2"
-            opcode: "null"
-            instruction_id: 109
-            operand_ids: 105
-            operand_ids: 107
-          }
-        }
+        name: "all-reduce_torus-2d_all-gather_root"
+        opcode: "null"
+        instruction_id: 138
+        operand_ids: 112
+        operand_ids: 128
       }
     }
   }
@@ -1248,7 +1505,8 @@ TEST(Torus2dAllReduce, NoBarrier) {
       "all-reduce": {
         "algorithm": "torus-2d",
         "concentration": 2,
-        "dimension_widths": [2, 2]
+        "dimension_widths": [2, 2],
+        "integrated_local_exchange": true
       }
     }
   )"_json;
@@ -1256,6 +1514,7 @@ TEST(Torus2dAllReduce, NoBarrier) {
   ASSERT_OK_AND_ASSIGN(auto translators, paragraph::CreateTranslators(
       paragraph::TranslatorType::kCollective, config));
   EXPECT_OK(translators["all-reduce"]->Translate(allreduce));
+  std::cout << allreduce->ToProto()->DebugString() << std::endl;
 
   paragraph::InstructionProto allreduce_proto = no_barrier_test_proto();
   EXPECT_TRUE(google::protobuf::util::MessageDifferencer::Equals(
