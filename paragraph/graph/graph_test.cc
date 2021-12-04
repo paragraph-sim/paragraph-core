@@ -863,6 +863,163 @@ std::string get_testfile_name(const std::string& basename) {
   return f;
 }
 
+paragraph::GraphProto create_test_trim_proto() {
+  paragraph::GraphProto test_graph_proto;
+  std::string test_graph_str =
+      R"proto(
+  name: "test_graph"
+  processor_id: 1
+  entry_subroutine {
+    name: "test_subroutine"
+    subroutine_root_id: 9
+    execution_probability: 1
+    execution_count: 1
+    instructions {
+      name: "compute_pred1"
+      opcode: "infeed"
+      instruction_id: 1
+      bytes_out: 36.5
+    }
+    instructions {
+      name: "reduction_operand1"
+      opcode: "delay"
+      instruction_id: 2
+      ops: 128
+      operand_ids: 1
+    }
+    instructions {
+      name: "reduction"
+      opcode: "all-reduce"
+      instruction_id: 3
+      communication_groups {
+        group_ids: 1
+        group_ids: 7
+        group_ids: 42
+      }
+      operand_ids: 2
+    }
+    instructions {
+      name: "test"
+      opcode: "while"
+      instruction_id: 4
+      inner_subroutines {
+        name: "body_subroutine"
+        subroutine_root_id: 5
+        execution_probability: 1
+        execution_count: 1
+        instructions {
+          name: "body_compute"
+          opcode: "delay"
+          instruction_id: 5
+          transcendentals: 111
+        }
+      }
+      inner_subroutines {
+        name: "cond_subroutine"
+        subroutine_root_id: 7
+        execution_probability: 1
+        execution_count: 1
+        instructions {
+          name: "cond_call"
+          opcode: "delay"
+          instruction_id: 7
+        }
+      }
+    }
+    instructions {
+      name: "send"
+      opcode: "send"
+      instruction_id: 8
+      bytes_in: 8
+      communication_groups {
+        group_ids: 42
+      }
+    }
+    instructions {
+      name: "root"
+      opcode: "null"
+      instruction_id: 9
+      operand_ids: 3
+      operand_ids: 4
+      operand_ids: 8
+    }
+  }
+      )proto";
+  google::protobuf::TextFormat::ParseFromString(test_graph_str,
+                                                &test_graph_proto);
+  return test_graph_proto;
+}
+
+// Tests TrimGraph() method
+TEST(Graph, TrimGraph) {
+  auto graph = absl::make_unique<paragraph::Graph>("test_graph", 1);
+  auto sub = absl::make_unique<paragraph::Subroutine>(
+      "test_subroutine", graph.get());
+  auto sub_ptr = sub.get();
+  graph->SetEntrySubroutine(std::move(sub));
+
+  ASSERT_OK_AND_ASSIGN(auto instr_1, paragraph::Instruction::Create(
+      paragraph::Opcode::kInfeed, "compute_pred1", sub_ptr));
+  instr_1->SetBytesOut(36.5);
+
+  ASSERT_OK_AND_ASSIGN(auto instr_2, paragraph::Instruction::Create(
+      paragraph::Opcode::kDelay, "reduction_operand1", sub_ptr));
+  instr_2->SetOps(128.);
+  instr_2->AddOperand(instr_1);
+
+  ASSERT_OK_AND_ASSIGN(auto instr_3, paragraph::Instruction::Create(
+      paragraph::Opcode::kAllReduce, "reduction", sub_ptr));
+  paragraph::CommunicationGroup group_1 = {1, 7, 42};
+  instr_3->AppendCommunicationGroup(group_1);
+  instr_3->AddOperand(instr_2);
+
+
+  ASSERT_OK_AND_ASSIGN(auto while_instr, paragraph::Instruction::Create(
+      paragraph::Opcode::kWhile, "test", sub_ptr));
+  while_instr->SetId(4);
+  auto body_sub = absl::make_unique<paragraph::Subroutine>(
+      "body_subroutine", graph.get());
+  auto body_sub_ptr = body_sub.get();
+  ASSERT_OK_AND_ASSIGN(auto body_compute, paragraph::Instruction::Create(
+      paragraph::Opcode::kDelay, "body_compute", body_sub_ptr, true));
+  body_compute->SetId(5);
+  body_compute->SetTranscendentals(111.);
+  while_instr->AppendInnerSubroutine(std::move(body_sub));
+
+  auto call_sub = absl::make_unique<paragraph::Subroutine>(
+      "call_subroutine", graph.get());
+  auto call_sub_ptr = call_sub.get();
+  ASSERT_OK_AND_ASSIGN(auto call_func, paragraph::Instruction::Create(
+      paragraph::Opcode::kDelay, "call_func", call_sub_ptr, true));
+  call_func->SetId(6);
+
+  auto cond_sub = absl::make_unique<paragraph::Subroutine>(
+      "cond_subroutine", graph.get());
+  auto cond_sub_ptr = cond_sub.get();
+  ASSERT_OK_AND_ASSIGN(auto cond_call, paragraph::Instruction::Create(
+      paragraph::Opcode::kCall, "cond_call", cond_sub_ptr, true));
+  cond_call->SetId(7);
+  cond_call->AppendInnerSubroutine(std::move(call_sub));
+  while_instr->AppendInnerSubroutine(std::move(cond_sub));
+
+  ASSERT_OK_AND_ASSIGN(auto send_instr, paragraph::Instruction::Create(
+      paragraph::Opcode::kSend, "send", sub_ptr));
+  paragraph::CommunicationGroup send_group = {42};
+  send_instr->SetBytesIn(8.);
+  send_instr->AppendCommunicationGroup(send_group);
+  send_instr->SetId(8);
+
+  ASSERT_OK_AND_ASSIGN(auto root_instr, paragraph::Instruction::Create(
+      paragraph::Opcode::kNull, "root", sub_ptr, true));
+  root_instr->AddOperand(instr_3);
+  root_instr->AddOperand(while_instr);
+  root_instr->AddOperand(send_instr);
+
+  EXPECT_OK(graph->TrimGraph());
+  google::protobuf::util::MessageDifferencer diff;
+  EXPECT_TRUE(diff.Compare(graph->ToProto().value(), create_test_trim_proto()));
+}
+
 // Tests graph writing to and reading from file
 TEST(Graph, FileIO) {
   for (const std::string& ext : {".pb", ".textproto"}) {
