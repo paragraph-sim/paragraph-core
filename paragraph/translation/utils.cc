@@ -14,7 +14,9 @@
  */
 #include "paragraph/translation/utils.h"
 
+#include <algorithm>
 #include <vector>
+#include <unordered_set>
 
 namespace paragraph {
 
@@ -43,6 +45,39 @@ uint64_t GridCoordinatesToConsecutiveProcessorId(
     step *= dimension_sizes.at(index - 1);
   }
   return processor_id;
+}
+
+CommunicationGroup CommunicationGroupProjectionOnDimensions(
+    const std::unordered_set<size_t>& dimensions,
+    int64_t processor_id,
+    const CommunicationGroup& comm_group,
+    const std::vector<uint64_t>& dimension_sizes,
+    uint64_t concentration) {
+  std::vector<uint64_t> processor_coordinates =
+      ConsecutiveProcessorIdToGridCoordinates(processor_id,
+                                              dimension_sizes,
+                                              concentration);
+  std::vector<size_t> rigid_dimensions;
+  for (size_t dim = 0; dim <= dimension_sizes.size(); dim++) {
+    if (dimensions.find(dim) == dimensions.end()) {
+      rigid_dimensions.push_back(dim);
+    }
+  }
+  CommunicationGroup new_comm_group;
+  for (const auto& peer_id : comm_group) {
+    bool in_projection = true;
+    auto peer_coordinates = ConsecutiveProcessorIdToGridCoordinates(
+        peer_id, dimension_sizes, concentration);
+    for (auto& dim : rigid_dimensions) {
+      if (peer_coordinates.at(dim) != processor_coordinates.at(dim)) {
+        in_projection = false;
+      }
+    }
+    if (in_projection) {
+      new_comm_group.push_back(peer_id);
+    }
+  }
+  return new_comm_group;
 }
 
 CommunicationGroup Swizzling2dGridToRing(

@@ -24,6 +24,271 @@
 #include "paragraph/shim/test_macros.h"
 #include "paragraph/translation/translation_map.h"
 
+paragraph::InstructionProto Mesh2dAllGather_no_barrier_test_proto() {
+  paragraph::InstructionProto proto;
+  std::string test_str =
+      R"proto(
+name: "all-gather"
+opcode: "all-gather"
+instruction_id: 2
+bytes_out: 160
+communication_groups {
+  group_ids: 0
+  group_ids: 1
+  group_ids: 2
+  group_ids: 3
+  group_ids: 4
+  group_ids: 5
+  group_ids: 6
+  group_ids: 7
+}
+inner_subroutines {
+  name: "all-gather_mesh-2d"
+  subroutine_root_id: 24
+  execution_probability: 1
+  execution_count: 1
+  instructions {
+    name: "all-gather_stream-0_stage-0"
+    opcode: "all-gather"
+    instruction_id: 4
+    bytes_out: 20
+    communication_groups {
+      group_ids: 1
+      group_ids: 3
+    }
+    inner_subroutines {
+      name: "all-gather_stream-0_stage-0_mesh-1d"
+      subroutine_root_id: 5
+      execution_probability: 1
+      execution_count: 1
+      instructions {
+        name: "all-gather_stream-0_stage-0_mesh-1d_cw_sendrecv_0"
+        opcode: "sendrecv"
+        instruction_id: 5
+        bytes_in: 10
+        bytes_out: 10
+        communication_groups {
+          group_ids: 3
+          group_ids: 3
+        }
+      }
+    }
+  }
+  instructions {
+    name: "all-gather_stream-0_stage-1"
+    opcode: "all-gather"
+    instruction_id: 6
+    bytes_out: 80
+    communication_groups {
+      group_ids: 0
+      group_ids: 1
+      group_ids: 4
+      group_ids: 5
+    }
+    operand_ids: 4
+    inner_subroutines {
+      name: "all-gather_stream-0_stage-1_mesh-1d"
+      subroutine_root_id: 13
+      execution_probability: 1
+      execution_count: 1
+      instructions {
+        name: "all-gather_stream-0_stage-1_mesh-1d_ccw_sendrecv_0"
+        opcode: "sendrecv"
+        instruction_id: 7
+        bytes_in: 20
+        bytes_out: 20
+        communication_groups {
+          group_ids: 0
+          group_ids: 0
+        }
+      }
+      instructions {
+        name: "all-gather_stream-0_stage-1_mesh-1d_cw_sendrecv_0"
+        opcode: "sendrecv"
+        instruction_id: 8
+        bytes_in: 20
+        bytes_out: 20
+        communication_groups {
+          group_ids: 4
+          group_ids: 4
+        }
+      }
+      instructions {
+        name: "all-gather_stream-0_stage-1_mesh-1d_root_0"
+        opcode: "null"
+        instruction_id: 9
+        operand_ids: 8
+        operand_ids: 7
+      }
+      instructions {
+        name: "all-gather_stream-0_stage-1_mesh-1d_ccw_send_1"
+        opcode: "send"
+        instruction_id: 10
+        bytes_out: 20
+        communication_groups {
+          group_ids: 0
+        }
+        operand_ids: 9
+      }
+      instructions {
+        name: "all-gather_stream-0_stage-1_mesh-1d_cw_sendrecv_1"
+        opcode: "sendrecv"
+        instruction_id: 11
+        bytes_in: 20
+        bytes_out: 20
+        communication_groups {
+          group_ids: 4
+          group_ids: 4
+        }
+        operand_ids: 9
+      }
+      instructions {
+        name: "all-gather_stream-0_stage-1_mesh-1d_root_1"
+        opcode: "null"
+        instruction_id: 12
+        operand_ids: 11
+        operand_ids: 10
+      }
+      instructions {
+        name: "all-gather_stream-0_stage-1_mesh-1d_ccw_send_2"
+        opcode: "send"
+        instruction_id: 13
+        bytes_out: 20
+        communication_groups {
+          group_ids: 0
+        }
+        operand_ids: 12
+      }
+    }
+  }
+  instructions {
+    name: "all-gather_stream-1_stage-0"
+    opcode: "all-gather"
+    instruction_id: 14
+    bytes_out: 20
+    communication_groups {
+      group_ids: 1
+      group_ids: 5
+    }
+    inner_subroutines {
+      name: "all-gather_stream-1_stage-0_mesh-1d"
+      subroutine_root_id: 15
+      execution_probability: 1
+      execution_count: 1
+      instructions {
+        name: "all-gather_stream-1_stage-0_mesh-1d_cw_sendrecv_0"
+        opcode: "sendrecv"
+        instruction_id: 15
+        bytes_in: 10
+        bytes_out: 10
+        communication_groups {
+          group_ids: 5
+          group_ids: 5
+        }
+      }
+    }
+  }
+  instructions {
+    name: "all-gather_stream-1_stage-1"
+    opcode: "all-gather"
+    instruction_id: 16
+    bytes_out: 80
+    communication_groups {
+      group_ids: 0
+      group_ids: 1
+      group_ids: 2
+      group_ids: 3
+    }
+    operand_ids: 14
+    inner_subroutines {
+      name: "all-gather_stream-1_stage-1_mesh-1d"
+      subroutine_root_id: 23
+      execution_probability: 1
+      execution_count: 1
+      instructions {
+        name: "all-gather_stream-1_stage-1_mesh-1d_ccw_sendrecv_0"
+        opcode: "sendrecv"
+        instruction_id: 17
+        bytes_in: 20
+        bytes_out: 20
+        communication_groups {
+          group_ids: 0
+          group_ids: 0
+        }
+      }
+      instructions {
+        name: "all-gather_stream-1_stage-1_mesh-1d_cw_sendrecv_0"
+        opcode: "sendrecv"
+        instruction_id: 18
+        bytes_in: 20
+        bytes_out: 20
+        communication_groups {
+          group_ids: 2
+          group_ids: 2
+        }
+      }
+      instructions {
+        name: "all-gather_stream-1_stage-1_mesh-1d_root_0"
+        opcode: "null"
+        instruction_id: 19
+        operand_ids: 18
+        operand_ids: 17
+      }
+      instructions {
+        name: "all-gather_stream-1_stage-1_mesh-1d_ccw_send_1"
+        opcode: "send"
+        instruction_id: 20
+        bytes_out: 20
+        communication_groups {
+          group_ids: 0
+        }
+        operand_ids: 19
+      }
+      instructions {
+        name: "all-gather_stream-1_stage-1_mesh-1d_cw_sendrecv_1"
+        opcode: "sendrecv"
+        instruction_id: 21
+        bytes_in: 20
+        bytes_out: 20
+        communication_groups {
+          group_ids: 2
+          group_ids: 2
+        }
+        operand_ids: 19
+      }
+      instructions {
+        name: "all-gather_stream-1_stage-1_mesh-1d_root_1"
+        opcode: "null"
+        instruction_id: 22
+        operand_ids: 21
+        operand_ids: 20
+      }
+      instructions {
+        name: "all-gather_stream-1_stage-1_mesh-1d_ccw_send_2"
+        opcode: "send"
+        instruction_id: 23
+        bytes_out: 20
+        communication_groups {
+          group_ids: 0
+        }
+        operand_ids: 22
+      }
+    }
+  }
+  instructions {
+    name: "all-gather_root"
+    opcode: "null"
+    instruction_id: 24
+    operand_ids: 6
+    operand_ids: 16
+  }
+}
+      )proto";
+  google::protobuf::TextFormat::ParseFromString(test_str,
+                                                &proto);
+  return proto;
+}  // NOLINT
+
 // Tests expanding 2D-Mesh all-gather
 TEST(Mesh2dAllGather, NoBarrier) {
   auto graph = absl::make_unique<paragraph::Graph>("test_graph", 1);
@@ -39,7 +304,7 @@ TEST(Mesh2dAllGather, NoBarrier) {
   ASSERT_OK_AND_ASSIGN(auto allgather,
                        paragraph::Instruction::Create(
       paragraph::Opcode::kAllGather, "all-gather", sub_ptr));
-  allgather->SetBytesOut(80);
+  allgather->SetBytesOut(160);
   paragraph::CommunicationGroup allgather_group = {0, 1, 2, 3, 4, 5, 6, 7};
   allgather->AppendCommunicationGroup(allgather_group);
 
@@ -52,7 +317,8 @@ TEST(Mesh2dAllGather, NoBarrier) {
       "all-gather": {
         "algorithm": "mesh-2d",
         "concentration": 2,
-        "dimension_widths": [2, 2]
+        "dimension_widths": [2, 2],
+        "integrated_local_exchange": true
       }
     }
   )"_json;
@@ -61,13 +327,20 @@ TEST(Mesh2dAllGather, NoBarrier) {
      paragraph::TranslatorType::kCollective, config));
   EXPECT_OK(translators["all-gather"]->Translate(allgather));
 
-  paragraph::InstructionProto allgather_proto;
-  std::string allgather_str =
+  paragraph::InstructionProto allgather_proto =
+      Mesh2dAllGather_no_barrier_test_proto();
+  EXPECT_TRUE(google::protobuf::util::MessageDifferencer::Equals(
+      allgather->ToProto().value(), allgather_proto));
+}
+
+paragraph::InstructionProto Mesh2dAllGather_with_barrier_test_proto() {
+  paragraph::InstructionProto proto;
+  std::string test_str =
       R"proto(
 name: "all-gather"
 opcode: "all-gather"
 instruction_id: 2
-bytes_out: 80
+bytes_out: 160
 communication_groups {
   group_ids: 0
   group_ids: 1
@@ -80,99 +353,337 @@ communication_groups {
 }
 inner_subroutines {
   name: "all-gather_mesh-2d"
-  subroutine_root_id: 8
+  subroutine_root_id: 26
   execution_probability: 1
   execution_count: 1
   instructions {
-    name: "all-gather_dim-conc"
+    name: "all-gather_stream-0_stage-0"
     opcode: "all-gather"
     instruction_id: 4
     bytes_out: 20
     communication_groups {
       group_ids: 0
-      group_ids: 1
+      group_ids: 2
     }
     inner_subroutines {
-      name: "all-gather_dim-conc_mesh-1d"
-      subroutine_root_id: 5
+      name: "all-gather_stream-0_stage-0_mesh-1d"
+      subroutine_root_id: 8
       execution_probability: 1
       execution_count: 1
       instructions {
-        name: "all-gather_dim-conc_mesh-1d_ccw_sendrecv_0"
-        opcode: "sendrecv"
+        name: "all-gather_stream-0_stage-0_mesh-1d_barrier"
+        opcode: "barrier"
         instruction_id: 5
+        communication_groups {
+          group_ids: 0
+          group_ids: 2
+        }
+        inner_subroutines {
+          name: "all-gather_stream-0_stage-0_mesh-1d_barrier_centralized"
+          subroutine_root_id: 7
+          execution_probability: 1
+          execution_count: 1
+          instructions {
+            name: "all-gather_stream-0_stage-0_mesh-1d_barrier_centralized_send_to_0"
+            opcode: "send"
+            instruction_id: 6
+            communication_groups {
+              group_ids: 0
+            }
+          }
+          instructions {
+            name: "all-gather_stream-0_stage-0_mesh-1d_barrier_centralized_recv_from_0"
+            opcode: "recv"
+            instruction_id: 7
+            communication_groups {
+              group_ids: 0
+            }
+            operand_ids: 6
+          }
+        }
+      }
+      instructions {
+        name: "all-gather_stream-0_stage-0_mesh-1d_ccw_sendrecv_0"
+        opcode: "sendrecv"
+        instruction_id: 8
         bytes_in: 10
         bytes_out: 10
         communication_groups {
           group_ids: 0
           group_ids: 0
         }
+        operand_ids: 5
       }
     }
   }
   instructions {
-    name: "all-gather_dim-0"
+    name: "all-gather_stream-0_stage-1"
     opcode: "all-gather"
-    instruction_id: 6
-    bytes_out: 20
+    instruction_id: 9
+    bytes_out: 40
     communication_groups {
-      group_ids: 1
-      group_ids: 3
+      group_ids: 2
+      group_ids: 6
     }
     operand_ids: 4
     inner_subroutines {
-      name: "all-gather_dim-0_mesh-1d"
-      subroutine_root_id: 7
+      name: "all-gather_stream-0_stage-1_mesh-1d"
+      subroutine_root_id: 14
       execution_probability: 1
       execution_count: 1
       instructions {
-        name: "all-gather_dim-0_mesh-1d_cw_sendrecv_0"
-        opcode: "sendrecv"
-        instruction_id: 7
-        bytes_in: 10
-        bytes_out: 10
+        name: "all-gather_stream-0_stage-1_mesh-1d_barrier"
+        opcode: "barrier"
+        instruction_id: 10
         communication_groups {
-          group_ids: 3
-          group_ids: 3
+          group_ids: 2
+          group_ids: 6
         }
+        inner_subroutines {
+          name: "all-gather_stream-0_stage-1_mesh-1d_barrier_centralized"
+          subroutine_root_id: 13
+          execution_probability: 1
+          execution_count: 1
+          instructions {
+            name: "all-gather_stream-0_stage-1_mesh-1d_barrier_centralized_coordinator_recv_from_6"
+            opcode: "recv"
+            instruction_id: 11
+            communication_groups {
+              group_ids: 6
+            }
+          }
+          instructions {
+            name: "all-gather_stream-0_stage-1_mesh-1d_barrier_centralized_coordinator_send_to_6"
+            opcode: "send"
+            instruction_id: 12
+            communication_groups {
+              group_ids: 6
+            }
+            operand_ids: 11
+          }
+          instructions {
+            name: "all-gather_stream-0_stage-1_mesh-1d_barrier_centralized_root_2"
+            opcode: "null"
+            instruction_id: 13
+            operand_ids: 12
+          }
+        }
+      }
+      instructions {
+        name: "all-gather_stream-0_stage-1_mesh-1d_cw_sendrecv_0"
+        opcode: "sendrecv"
+        instruction_id: 14
+        bytes_in: 20
+        bytes_out: 20
+        communication_groups {
+          group_ids: 6
+          group_ids: 6
+        }
+        operand_ids: 10
       }
     }
   }
   instructions {
-    name: "all-gather_dim-1"
+    name: "all-gather_stream-1_stage-0"
     opcode: "all-gather"
-    instruction_id: 8
+    instruction_id: 15
     bytes_out: 20
     communication_groups {
-      group_ids: 1
-      group_ids: 5
+      group_ids: 2
+      group_ids: 6
     }
-    operand_ids: 6
     inner_subroutines {
-      name: "all-gather_dim-1_mesh-1d"
-      subroutine_root_id: 9
+      name: "all-gather_stream-1_stage-0_mesh-1d"
+      subroutine_root_id: 20
       execution_probability: 1
       execution_count: 1
       instructions {
-        name: "all-gather_dim-1_mesh-1d_cw_sendrecv_0"
+        name: "all-gather_stream-1_stage-0_mesh-1d_barrier"
+        opcode: "barrier"
+        instruction_id: 16
+        communication_groups {
+          group_ids: 2
+          group_ids: 6
+        }
+        inner_subroutines {
+          name: "all-gather_stream-1_stage-0_mesh-1d_barrier_centralized"
+          subroutine_root_id: 19
+          execution_probability: 1
+          execution_count: 1
+          instructions {
+            name: "all-gather_stream-1_stage-0_mesh-1d_barrier_centralized_coordinator_recv_from_6"
+            opcode: "recv"
+            instruction_id: 17
+            communication_groups {
+              group_ids: 6
+            }
+          }
+          instructions {
+            name: "all-gather_stream-1_stage-0_mesh-1d_barrier_centralized_coordinator_send_to_6"
+            opcode: "send"
+            instruction_id: 18
+            communication_groups {
+              group_ids: 6
+            }
+            operand_ids: 17
+          }
+          instructions {
+            name: "all-gather_stream-1_stage-0_mesh-1d_barrier_centralized_root_2"
+            opcode: "null"
+            instruction_id: 19
+            operand_ids: 18
+          }
+        }
+      }
+      instructions {
+        name: "all-gather_stream-1_stage-0_mesh-1d_cw_sendrecv_0"
         opcode: "sendrecv"
-        instruction_id: 9
+        instruction_id: 20
         bytes_in: 10
         bytes_out: 10
         communication_groups {
-          group_ids: 5
-          group_ids: 5
+          group_ids: 6
+          group_ids: 6
         }
+        operand_ids: 16
+      }
+    }
+  }
+  instructions {
+    name: "all-gather_stream-1_stage-1"
+    opcode: "all-gather"
+    instruction_id: 21
+    bytes_out: 40
+    communication_groups {
+      group_ids: 0
+      group_ids: 2
+    }
+    operand_ids: 15
+    inner_subroutines {
+      name: "all-gather_stream-1_stage-1_mesh-1d"
+      subroutine_root_id: 25
+      execution_probability: 1
+      execution_count: 1
+      instructions {
+        name: "all-gather_stream-1_stage-1_mesh-1d_barrier"
+        opcode: "barrier"
+        instruction_id: 22
+        communication_groups {
+          group_ids: 0
+          group_ids: 2
+        }
+        inner_subroutines {
+          name: "all-gather_stream-1_stage-1_mesh-1d_barrier_centralized"
+          subroutine_root_id: 24
+          execution_probability: 1
+          execution_count: 1
+          instructions {
+            name: "all-gather_stream-1_stage-1_mesh-1d_barrier_centralized_send_to_0"
+            opcode: "send"
+            instruction_id: 23
+            communication_groups {
+              group_ids: 0
+            }
+          }
+          instructions {
+            name: "all-gather_stream-1_stage-1_mesh-1d_barrier_centralized_recv_from_0"
+            opcode: "recv"
+            instruction_id: 24
+            communication_groups {
+              group_ids: 0
+            }
+            operand_ids: 23
+          }
+        }
+      }
+      instructions {
+        name: "all-gather_stream-1_stage-1_mesh-1d_ccw_sendrecv_0"
+        opcode: "sendrecv"
+        instruction_id: 25
+        bytes_in: 20
+        bytes_out: 20
+        communication_groups {
+          group_ids: 0
+          group_ids: 0
+        }
+        operand_ids: 22
+      }
+    }
+  }
+  instructions {
+    name: "all-gather_conc"
+    opcode: "all-gather"
+    instruction_id: 26
+    bytes_out: 160
+    communication_groups {
+      group_ids: 2
+      group_ids: 3
+    }
+    operand_ids: 9
+    operand_ids: 21
+    inner_subroutines {
+      name: "all-gather_conc_mesh-1d"
+      subroutine_root_id: 31
+      execution_probability: 1
+      execution_count: 1
+      instructions {
+        name: "all-gather_conc_mesh-1d_barrier"
+        opcode: "barrier"
+        instruction_id: 27
+        communication_groups {
+          group_ids: 2
+          group_ids: 3
+        }
+        inner_subroutines {
+          name: "all-gather_conc_mesh-1d_barrier_centralized"
+          subroutine_root_id: 30
+          execution_probability: 1
+          execution_count: 1
+          instructions {
+            name: "all-gather_conc_mesh-1d_barrier_centralized_coordinator_recv_from_3"
+            opcode: "recv"
+            instruction_id: 28
+            communication_groups {
+              group_ids: 3
+            }
+          }
+          instructions {
+            name: "all-gather_conc_mesh-1d_barrier_centralized_coordinator_send_to_3"
+            opcode: "send"
+            instruction_id: 29
+            communication_groups {
+              group_ids: 3
+            }
+            operand_ids: 28
+          }
+          instructions {
+            name: "all-gather_conc_mesh-1d_barrier_centralized_root_2"
+            opcode: "null"
+            instruction_id: 30
+            operand_ids: 29
+          }
+        }
+      }
+      instructions {
+        name: "all-gather_conc_mesh-1d_cw_sendrecv_0"
+        opcode: "sendrecv"
+        instruction_id: 31
+        bytes_in: 80
+        bytes_out: 80
+        communication_groups {
+          group_ids: 3
+          group_ids: 3
+        }
+        operand_ids: 27
       }
     }
   }
 }
       )proto";
-  google::protobuf::TextFormat::ParseFromString(allgather_str,
-                                                &allgather_proto);
-  EXPECT_TRUE(google::protobuf::util::MessageDifferencer::Equals(
-      allgather->ToProto().value(), allgather_proto));
-}
+  google::protobuf::TextFormat::ParseFromString(test_str,
+                                                &proto);
+  return proto;
+}  // NOLINT
 
 // Tests expanding 1D-Mesh all-gather with barrier
 TEST(Mesh2dAllGather, WithBarrier) {
@@ -190,7 +701,7 @@ TEST(Mesh2dAllGather, WithBarrier) {
   ASSERT_OK_AND_ASSIGN(auto allgather,
                        paragraph::Instruction::Create(
       paragraph::Opcode::kAllGather, "all-gather", sub_ptr));
-  allgather->SetBytesOut(80);
+  allgather->SetBytesOut(160);
   paragraph::CommunicationGroup allgather_group = {0, 1, 2, 3, 4, 5, 6, 7};
   allgather->AppendCommunicationGroup(allgather_group);
 
@@ -215,229 +726,190 @@ TEST(Mesh2dAllGather, WithBarrier) {
      paragraph::TranslatorType::kCollective, config));
   EXPECT_OK(translators["all-gather"]->Translate(allgather));
 
-  paragraph::InstructionProto allgather_proto;
-  std::string allgather_str =
+  paragraph::InstructionProto allgather_proto =
+      Mesh2dAllGather_with_barrier_test_proto();
+  EXPECT_TRUE(google::protobuf::util::MessageDifferencer::Equals(
+      allgather->ToProto().value(), allgather_proto));
+}
+
+paragraph::InstructionProto
+Mesh2dAllGather_inconsecutive_proc_test_proto() {
+  paragraph::InstructionProto proto;
+  std::string test_str =
       R"proto(
 name: "all-gather"
 opcode: "all-gather"
 instruction_id: 2
-bytes_out: 80
+bytes_out: 48
 communication_groups {
   group_ids: 0
-  group_ids: 1
   group_ids: 2
-  group_ids: 3
   group_ids: 4
-  group_ids: 5
-  group_ids: 6
-  group_ids: 7
 }
 inner_subroutines {
   name: "all-gather_mesh-2d"
-  subroutine_root_id: 15
+  subroutine_root_id: 18
   execution_probability: 1
   execution_count: 1
   instructions {
-    name: "all-gather_dim-conc"
+    name: "all-gather_stream-0_stage-1"
     opcode: "all-gather"
     instruction_id: 4
-    bytes_out: 20
-    communication_groups {
-      group_ids: 2
-      group_ids: 3
-    }
-    inner_subroutines {
-      name: "all-gather_dim-conc_mesh-1d"
-      subroutine_root_id: 9
-      execution_probability: 1
-      execution_count: 1
-      instructions {
-        name: "all-gather_dim-conc_mesh-1d_barrier"
-        opcode: "barrier"
-        instruction_id: 5
-        communication_groups {
-          group_ids: 2
-          group_ids: 3
-        }
-        inner_subroutines {
-          name: "all-gather_dim-conc_mesh-1d_barrier_centralized"
-          subroutine_root_id: 8
-          execution_probability: 1
-          execution_count: 1
-          instructions {
-            name: "all-gather_dim-conc_mesh-1d_barrier_centralized_coordinator_recv_from_3"
-            opcode: "recv"
-            instruction_id: 6
-            communication_groups {
-              group_ids: 3
-            }
-          }
-          instructions {
-            name: "all-gather_dim-conc_mesh-1d_barrier_centralized_coordinator_send_to_3"
-            opcode: "send"
-            instruction_id: 7
-            communication_groups {
-              group_ids: 3
-            }
-            operand_ids: 6
-          }
-          instructions {
-            name: "all-gather_dim-conc_mesh-1d_barrier_centralized_root_2"
-            opcode: "null"
-            instruction_id: 8
-            operand_ids: 7
-          }
-        }
-      }
-      instructions {
-        name: "all-gather_dim-conc_mesh-1d_cw_sendrecv_0"
-        opcode: "sendrecv"
-        instruction_id: 9
-        bytes_in: 10
-        bytes_out: 10
-        communication_groups {
-          group_ids: 3
-          group_ids: 3
-        }
-        operand_ids: 5
-      }
-    }
-  }
-  instructions {
-    name: "all-gather_dim-0"
-    opcode: "all-gather"
-    instruction_id: 10
-    bytes_out: 20
+    bytes_out: 24
     communication_groups {
       group_ids: 0
       group_ids: 2
+      group_ids: 4
     }
-    operand_ids: 4
     inner_subroutines {
-      name: "all-gather_dim-0_mesh-1d"
-      subroutine_root_id: 14
+      name: "all-gather_stream-0_stage-1_mesh-1d"
+      subroutine_root_id: 10
       execution_probability: 1
       execution_count: 1
       instructions {
-        name: "all-gather_dim-0_mesh-1d_barrier"
-        opcode: "barrier"
-        instruction_id: 11
+        name: "all-gather_stream-0_stage-1_mesh-1d_ccw_sendrecv_0"
+        opcode: "sendrecv"
+        instruction_id: 5
+        bytes_in: 8
+        bytes_out: 8
         communication_groups {
           group_ids: 0
-          group_ids: 2
-        }
-        inner_subroutines {
-          name: "all-gather_dim-0_mesh-1d_barrier_centralized"
-          subroutine_root_id: 13
-          execution_probability: 1
-          execution_count: 1
-          instructions {
-            name: "all-gather_dim-0_mesh-1d_barrier_centralized_send_to_0"
-            opcode: "send"
-            instruction_id: 12
-            communication_groups {
-              group_ids: 0
-            }
-          }
-          instructions {
-            name: "all-gather_dim-0_mesh-1d_barrier_centralized_recv_from_0"
-            opcode: "recv"
-            instruction_id: 13
-            communication_groups {
-              group_ids: 0
-            }
-            operand_ids: 12
-          }
+          group_ids: 0
         }
       }
       instructions {
-        name: "all-gather_dim-0_mesh-1d_ccw_sendrecv_0"
+        name: "all-gather_stream-0_stage-1_mesh-1d_cw_sendrecv_0"
         opcode: "sendrecv"
-        instruction_id: 14
-        bytes_in: 10
-        bytes_out: 10
+        instruction_id: 6
+        bytes_in: 8
+        bytes_out: 8
+        communication_groups {
+          group_ids: 4
+          group_ids: 4
+        }
+      }
+      instructions {
+        name: "all-gather_stream-0_stage-1_mesh-1d_root_0"
+        opcode: "null"
+        instruction_id: 7
+        operand_ids: 6
+        operand_ids: 5
+      }
+      instructions {
+        name: "all-gather_stream-0_stage-1_mesh-1d_ccw_send_1"
+        opcode: "send"
+        instruction_id: 8
+        bytes_out: 8
         communication_groups {
           group_ids: 0
-          group_ids: 0
         }
-        operand_ids: 11
+        operand_ids: 7
+      }
+      instructions {
+        name: "all-gather_stream-0_stage-1_mesh-1d_cw_send_1"
+        opcode: "send"
+        instruction_id: 9
+        bytes_out: 8
+        communication_groups {
+          group_ids: 4
+        }
+        operand_ids: 7
+      }
+      instructions {
+        name: "all-gather_stream-0_stage-1_mesh-1d_root_1"
+        opcode: "null"
+        instruction_id: 10
+        operand_ids: 9
+        operand_ids: 8
       }
     }
   }
   instructions {
-    name: "all-gather_dim-1"
+    name: "all-gather_stream-1_stage-0"
     opcode: "all-gather"
-    instruction_id: 15
-    bytes_out: 20
+    instruction_id: 11
+    bytes_out: 24
     communication_groups {
+      group_ids: 0
       group_ids: 2
-      group_ids: 6
+      group_ids: 4
     }
-    operand_ids: 10
     inner_subroutines {
-      name: "all-gather_dim-1_mesh-1d"
-      subroutine_root_id: 20
+      name: "all-gather_stream-1_stage-0_mesh-1d"
+      subroutine_root_id: 17
       execution_probability: 1
       execution_count: 1
       instructions {
-        name: "all-gather_dim-1_mesh-1d_barrier"
-        opcode: "barrier"
-        instruction_id: 16
+        name: "all-gather_stream-1_stage-0_mesh-1d_ccw_sendrecv_0"
+        opcode: "sendrecv"
+        instruction_id: 12
+        bytes_in: 8
+        bytes_out: 8
         communication_groups {
-          group_ids: 2
-          group_ids: 6
-        }
-        inner_subroutines {
-          name: "all-gather_dim-1_mesh-1d_barrier_centralized"
-          subroutine_root_id: 19
-          execution_probability: 1
-          execution_count: 1
-          instructions {
-            name: "all-gather_dim-1_mesh-1d_barrier_centralized_coordinator_recv_from_6"
-            opcode: "recv"
-            instruction_id: 17
-            communication_groups {
-              group_ids: 6
-            }
-          }
-          instructions {
-            name: "all-gather_dim-1_mesh-1d_barrier_centralized_coordinator_send_to_6"
-            opcode: "send"
-            instruction_id: 18
-            communication_groups {
-              group_ids: 6
-            }
-            operand_ids: 17
-          }
-          instructions {
-            name: "all-gather_dim-1_mesh-1d_barrier_centralized_root_2"
-            opcode: "null"
-            instruction_id: 19
-            operand_ids: 18
-          }
+          group_ids: 0
+          group_ids: 0
         }
       }
       instructions {
-        name: "all-gather_dim-1_mesh-1d_cw_sendrecv_0"
+        name: "all-gather_stream-1_stage-0_mesh-1d_cw_sendrecv_0"
         opcode: "sendrecv"
-        instruction_id: 20
-        bytes_in: 10
-        bytes_out: 10
+        instruction_id: 13
+        bytes_in: 8
+        bytes_out: 8
         communication_groups {
-          group_ids: 6
-          group_ids: 6
+          group_ids: 4
+          group_ids: 4
         }
+      }
+      instructions {
+        name: "all-gather_stream-1_stage-0_mesh-1d_root_0"
+        opcode: "null"
+        instruction_id: 14
+        operand_ids: 13
+        operand_ids: 12
+      }
+      instructions {
+        name: "all-gather_stream-1_stage-0_mesh-1d_ccw_send_1"
+        opcode: "send"
+        instruction_id: 15
+        bytes_out: 8
+        communication_groups {
+          group_ids: 0
+        }
+        operand_ids: 14
+      }
+      instructions {
+        name: "all-gather_stream-1_stage-0_mesh-1d_cw_send_1"
+        opcode: "send"
+        instruction_id: 16
+        bytes_out: 8
+        communication_groups {
+          group_ids: 4
+        }
+        operand_ids: 14
+      }
+      instructions {
+        name: "all-gather_stream-1_stage-0_mesh-1d_root_1"
+        opcode: "null"
+        instruction_id: 17
         operand_ids: 16
+        operand_ids: 15
       }
     }
   }
+  instructions {
+    name: "all-gather_root"
+    opcode: "null"
+    instruction_id: 18
+    operand_ids: 4
+    operand_ids: 11
+  }
 }
       )proto";
-  google::protobuf::TextFormat::ParseFromString(allgather_str,
-                                                &allgather_proto);
-  EXPECT_TRUE(google::protobuf::util::MessageDifferencer::Equals(
-      allgather->ToProto().value(), allgather_proto));
-}
+  google::protobuf::TextFormat::ParseFromString(test_str,
+                                                &proto);
+  return proto;
+}  // NOLINT
 
 // Tests expanding 1D-Mesh all-gather
 TEST(Mesh2dAllGather, InconsecutiveProcessors) {
@@ -475,100 +947,8 @@ TEST(Mesh2dAllGather, InconsecutiveProcessors) {
      paragraph::TranslatorType::kCollective, config));
   EXPECT_OK(translators["all-gather"]->Translate(allgather));
 
-  paragraph::InstructionProto allgather_proto;
-  std::string allgather_str =
-      R"proto(
-name: "all-gather"
-opcode: "all-gather"
-instruction_id: 2
-bytes_out: 48
-communication_groups {
-  group_ids: 0
-  group_ids: 2
-  group_ids: 4
-}
-inner_subroutines {
-  name: "all-gather_mesh-2d"
-  subroutine_root_id: 4
-  execution_probability: 1
-  execution_count: 1
-  instructions {
-    name: "all-gather_dim-1"
-    opcode: "all-gather"
-    instruction_id: 4
-    bytes_out: 48
-    communication_groups {
-      group_ids: 0
-      group_ids: 2
-      group_ids: 4
-    }
-    inner_subroutines {
-      name: "all-gather_dim-1_mesh-1d"
-      subroutine_root_id: 10
-      execution_probability: 1
-      execution_count: 1
-      instructions {
-        name: "all-gather_dim-1_mesh-1d_ccw_sendrecv_0"
-        opcode: "sendrecv"
-        instruction_id: 5
-        bytes_in: 16
-        bytes_out: 16
-        communication_groups {
-          group_ids: 0
-          group_ids: 0
-        }
-      }
-      instructions {
-        name: "all-gather_dim-1_mesh-1d_cw_sendrecv_0"
-        opcode: "sendrecv"
-        instruction_id: 6
-        bytes_in: 16
-        bytes_out: 16
-        communication_groups {
-          group_ids: 4
-          group_ids: 4
-        }
-      }
-      instructions {
-        name: "all-gather_dim-1_mesh-1d_root_0"
-        opcode: "null"
-        instruction_id: 7
-        operand_ids: 6
-        operand_ids: 5
-      }
-      instructions {
-        name: "all-gather_dim-1_mesh-1d_ccw_send_1"
-        opcode: "send"
-        instruction_id: 8
-        bytes_out: 16
-        communication_groups {
-          group_ids: 0
-        }
-        operand_ids: 7
-      }
-      instructions {
-        name: "all-gather_dim-1_mesh-1d_cw_send_1"
-        opcode: "send"
-        instruction_id: 9
-        bytes_out: 16
-        communication_groups {
-          group_ids: 4
-        }
-        operand_ids: 7
-      }
-      instructions {
-        name: "all-gather_dim-1_mesh-1d_root_1"
-        opcode: "null"
-        instruction_id: 10
-        operand_ids: 9
-        operand_ids: 8
-      }
-    }
-  }
-}
-      )proto";
-  google::protobuf::TextFormat::ParseFromString(allgather_str,
-                                                &allgather_proto);
+  paragraph::InstructionProto allgather_proto =
+      Mesh2dAllGather_inconsecutive_proc_test_proto();
   EXPECT_TRUE(google::protobuf::util::MessageDifferencer::Equals(
       allgather->ToProto().value(), allgather_proto));
 }

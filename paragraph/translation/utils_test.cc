@@ -53,6 +53,22 @@ TEST(TranslationUtils, GridCoordinatesToConsecutiveProcessorId) {
             22);
 }
 
+// Tests Communication group intersection with processors in particular
+// dimensions
+TEST(TranslationUtils, CommunicationGroupProjectionOnDimensions) {
+  uint64_t concentration = 2;
+  std::vector<uint64_t> dimension_sizes = {2, 3};
+  paragraph::CommunicationGroup comm_group = {0, 1, 2, 3, 4, 5, 10, 11};
+  paragraph::CommunicationGroup test_group = {2, 3, 10, 11};
+  EXPECT_EQ(paragraph::CommunicationGroupProjectionOnDimensions(
+      {0, 2}, 3, comm_group, dimension_sizes, concentration),
+            test_group);
+  paragraph::CommunicationGroup test_group_2 = {1, 3};
+  EXPECT_EQ(paragraph::CommunicationGroupProjectionOnDimensions(
+      {1}, 1, comm_group, dimension_sizes, concentration),
+            test_group_2);
+}
+
 // Tests 2d swizzling to map 2D grid on a logical ring
 TEST(TranslationUtils, Swizzling2dGridToRing) {
   uint64_t concentration = 2;

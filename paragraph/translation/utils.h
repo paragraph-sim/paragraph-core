@@ -15,6 +15,7 @@
 #ifndef PARAGRAPH_TRANSLATION_UTILS_H_
 #define PARAGRAPH_TRANSLATION_UTILS_H_
 
+#include <unordered_set>
 #include <vector>
 
 #include "paragraph/graph/graph.h"
@@ -30,6 +31,18 @@ std::vector<uint64_t> ConsecutiveProcessorIdToGridCoordinates(
 
 uint64_t GridCoordinatesToConsecutiveProcessorId(
     const std::vector<uint64_t>& coordinates,
+    const std::vector<uint64_t>& dimension_sizes,
+    uint64_t concentration);
+
+// Projection (or intersection) of communication group on the specified
+// grid dimensions. Similar to GridCoordinates, we start with concentrators
+// followed by grid dimensions. We seek all the processors in the communication
+// groups that have the same coordinates as current processor in all dimensions
+// except for the specified.
+CommunicationGroup CommunicationGroupProjectionOnDimensions(
+    const std::unordered_set<size_t>& dimensions,
+    int64_t processor_id,
+    const CommunicationGroup& comm_group,
     const std::vector<uint64_t>& dimension_sizes,
     uint64_t concentration);
 

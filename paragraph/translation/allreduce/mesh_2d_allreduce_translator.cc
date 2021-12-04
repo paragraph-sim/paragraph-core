@@ -52,6 +52,14 @@ Mesh2dAllReduceTranslator::Mesh2dAllReduceTranslator(
     implicit_config["reduce-scatter"]["concentration"] =
         config["concentration"];
   }
+  // Extract integrated local exchange (whether exchange between concentrators
+  // would happen during together with the last dimension, or during extra step)
+  if (config.find("integrated_local_exchange") != config.end()) {
+    implicit_config["all-gather"]["integrated_local_exchange"] =
+        config["integrated_local_exchange"];
+    implicit_config["reduce-scatter"]["integrated_local_exchange"] =
+        config["integrated_local_exchange"];
+  }
   // If we have a barrier in 2D Mesh, we need to pass it to both
   // reduce-scatter and all-gather
   if (config.find("barrier") != config.end()) {
