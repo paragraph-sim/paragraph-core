@@ -871,7 +871,7 @@ paragraph::GraphProto create_test_trim_proto() {
   processor_id: 1
   entry_subroutine {
     name: "test_subroutine"
-    subroutine_root_id: 9
+    subroutine_root_id: 12
     execution_probability: 1
     execution_count: 1
     instructions {
@@ -936,12 +936,18 @@ paragraph::GraphProto create_test_trim_proto() {
       }
     }
     instructions {
+      name: "test_instr"
+      opcode: "delay"
+      instruction_id: 9
+    }
+    instructions {
       name: "root"
       opcode: "null"
-      instruction_id: 9
+      instruction_id: 12
       operand_ids: 3
       operand_ids: 4
       operand_ids: 8
+      operand_ids: 9
     }
   }
       )proto";
@@ -1009,11 +1015,31 @@ TEST(Graph, TrimGraph) {
   send_instr->AppendCommunicationGroup(send_group);
   send_instr->SetId(8);
 
+  ASSERT_OK_AND_ASSIGN(auto test_instr, paragraph::Instruction::Create(
+      paragraph::Opcode::kCall, "test_instr", sub_ptr));
+
+  auto subroutine_1 = absl::make_unique<paragraph::Subroutine>(
+      "subroutine_1", graph.get());
+  auto subroutine_1_ptr = subroutine_1.get();
+  ASSERT_OK_AND_ASSIGN(auto casualty_1, paragraph::Instruction::Create(
+      paragraph::Opcode::kDelay, "casualty_1", subroutine_1_ptr, true));
+  casualty_1->SetOps(4);
+
+  auto subroutine_2 = absl::make_unique<paragraph::Subroutine>(
+      "subroutine_2", graph.get());
+  auto subroutine_2_ptr = subroutine_2.get();
+  ASSERT_OK_AND_ASSIGN(auto casualty_2, paragraph::Instruction::Create(
+      paragraph::Opcode::kDelay, "casualty_2", subroutine_2_ptr, true));
+  casualty_2->SetOps(4);
+  test_instr->AppendInnerSubroutine(std::move(subroutine_1));
+  test_instr->AppendInnerSubroutine(std::move(subroutine_2));
+
   ASSERT_OK_AND_ASSIGN(auto root_instr, paragraph::Instruction::Create(
       paragraph::Opcode::kNull, "root", sub_ptr, true));
   root_instr->AddOperand(instr_3);
   root_instr->AddOperand(while_instr);
   root_instr->AddOperand(send_instr);
+  root_instr->AddOperand(test_instr);
 
   EXPECT_OK(graph->TrimGraph());
   google::protobuf::util::MessageDifferencer diff;

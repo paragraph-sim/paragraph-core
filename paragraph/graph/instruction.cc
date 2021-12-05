@@ -197,11 +197,8 @@ absl::Status Instruction::DropEmptyInnerSubroutines() {
       }
     }
   }
-  for (std::vector<Subroutine*>::reverse_iterator
-       it = subroutines_to_delete.rbegin();
-       it != subroutines_to_delete.rend();
-       ++it) {
-    RETURN_IF_ERROR(RemoveInnerSubroutine(*it));
+  for (auto& subroutine : subroutines_to_delete) {
+    RETURN_IF_ERROR(RemoveInnerSubroutine(subroutine));
   }
   // Change Call opcode to Delay if we trimmed all its subroutines
   if ((opcode_ == Opcode::kCall) && inner_subroutines_.empty()) {
@@ -268,7 +265,7 @@ absl::Status Instruction::RemoveInnerSubroutine(Subroutine* subroutine) {
       name_ << " inner subroutines.";
   RETURN_IF_FALSE(subroutine == (*subroutine_it).get(),
                   absl::InternalError) << "Target subroutine " <<
-      subroutine->GetName() << "internal pointer is broken.";
+      subroutine->GetName() << " internal pointer is broken.";
   inner_subroutines_.erase(
       std::remove_if(inner_subroutines_.begin(), inner_subroutines_.end(),
                      [&](const std::unique_ptr<Subroutine>& subr) {
@@ -290,7 +287,7 @@ absl::Status Instruction::ReplaceInnerSubroutine(
       name_ << " inner subroutines.";
   RETURN_IF_FALSE(target_subroutine == (*subroutine_it).get(),
                   absl::InternalError) << "Target subroutine " <<
-      target_subroutine->GetName() << "internal pointer is broken.";
+      target_subroutine->GetName() << " internal pointer is broken.";
   new_subroutine->SetCallingInstruction(this);
   (*subroutine_it).swap(new_subroutine);
   return absl::OkStatus();
