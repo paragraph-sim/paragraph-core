@@ -1023,14 +1023,14 @@ TEST(Graph, TrimGraph) {
   auto subroutine_1_ptr = subroutine_1.get();
   ASSERT_OK_AND_ASSIGN(auto casualty_1, paragraph::Instruction::Create(
       paragraph::Opcode::kDelay, "casualty_1", subroutine_1_ptr, true));
-  casualty_1->SetOps(4);
+  casualty_1->SetName("casualty_1");
 
   auto subroutine_2 = absl::make_unique<paragraph::Subroutine>(
       "subroutine_2", graph.get());
   auto subroutine_2_ptr = subroutine_2.get();
   ASSERT_OK_AND_ASSIGN(auto casualty_2, paragraph::Instruction::Create(
       paragraph::Opcode::kDelay, "casualty_2", subroutine_2_ptr, true));
-  casualty_2->SetOps(4);
+  casualty_2->SetName("casualty_2");
   test_instr->AppendInnerSubroutine(std::move(subroutine_1));
   test_instr->AppendInnerSubroutine(std::move(subroutine_2));
 
@@ -1043,6 +1043,8 @@ TEST(Graph, TrimGraph) {
 
   EXPECT_OK(graph->TrimGraph());
   google::protobuf::util::MessageDifferencer diff;
+  std::cout << graph->ToProto()->DebugString() << std::endl;
+  std::cout << create_test_trim_proto().DebugString() << std::endl;
   EXPECT_TRUE(diff.Compare(graph->ToProto().value(), create_test_trim_proto()));
 }
 

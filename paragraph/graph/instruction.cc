@@ -178,6 +178,10 @@ absl::Status Instruction::DropEmptyInnerSubroutines() {
         "subroutine " << subroutine->GetName();
       bool can_drop = true;
       double total_seconds = 0;
+      double total_ops = 0;
+      double total_transcendentals = 0;
+      double total_bytes_in = 0;
+      double total_bytes_out = 0;
       for (auto& instruction : subroutine->Instructions()) {
         // We only can drop subroutines in general purpose instructions that
         // has no subroutines
@@ -191,8 +195,17 @@ absl::Status Instruction::DropEmptyInnerSubroutines() {
           can_drop = false;
         }
         total_seconds += instruction->GetSeconds();
+        total_ops += instruction->GetOps();
+        total_transcendentals += instruction->GetTranscendentals();
+        total_bytes_in += instruction->GetBytesIn();
+        total_bytes_out += instruction->GetBytesOut();
       }
-      if (can_drop && (total_seconds == 0)) {
+      if (can_drop &&
+          (total_seconds == 0) &&
+          (total_ops == 0) &&
+          (total_transcendentals == 0) &&
+          (total_bytes_in == 0) &&
+          (total_bytes_out == 0)) {
         subroutines_to_delete.push_back(subroutine.get());
       }
     }
