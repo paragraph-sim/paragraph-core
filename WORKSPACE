@@ -3,14 +3,14 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file"
 # rules_cc defines rules for generating C++ code from Protocol Buffers.
 
 # rules_proto defines abstract rules for building Protocol Buffers.
-hash = "97d8af4"
+release = "4.0.0"
 http_archive(
     name = "rules_proto",
     urls = [
-        "https://github.com/bazelbuild/rules_proto/tarball/" + hash,
+        "https://github.com/bazelbuild/rules_proto/archive/refs/tags/" + release + ".tar.gz",
     ],
     type = "tar.gz",
-    strip_prefix = "bazelbuild-rules_proto-" + hash,
+    strip_prefix = "rules_proto-" + release,
 )
 load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
 rules_proto_dependencies()
