@@ -74,6 +74,13 @@ bool Graph::IsConnected() {
   }
 }
 
+absl::Status Graph::TrimGraph() {
+  for (auto& instruction : entry_subroutine_->Instructions()) {
+    RETURN_IF_ERROR(instruction->DropEmptyInnerSubroutines());
+  }
+  return absl::OkStatus();
+}
+
 absl::Status Graph::DropDisconnected() {
   RETURN_IF_ERROR(entry_subroutine_->CheckIfConnected(
       /*drop_disconnected = */ true));

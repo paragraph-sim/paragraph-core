@@ -96,7 +96,6 @@ absl::Status Subroutine::DropDisconnected() {
 }
 
 absl::Status Subroutine::CheckIfConnected(bool drop_disconnected) {
-  std::cout << name_ << " " << drop_disconnected << std::endl;
   RETURN_IF_FALSE(root_instruction_ != nullptr,
                   absl::InternalError)
     << "Subroutine " << name_ << " does not have the root instruction.";
@@ -122,7 +121,6 @@ absl::Status Subroutine::CheckIfConnected(bool drop_disconnected) {
     while (!disconnected.empty()) {
       auto instr_to_remove = disconnected.back();
       disconnected.pop_back();
-      std::cout << "Removing instr " << instr_to_remove->GetName() << std::endl;
       RemoveInstruction(instr_to_remove);
     }
   } else {

@@ -283,6 +283,10 @@ class Instruction {
   // don't appear in PostOrder view
   absl::Status CheckIfConnected(bool drop_disconnected = false);
 
+  // Drops empty subroutines, meaning subroutines belonging to general purpose
+  // instructions in which all instructions has zero seconds assigned
+  absl::Status DropEmptyInnerSubroutines();
+
   // Vector that encodes all communication directions for the instruction
   // For Send/Recv should have size one since it's a direct communication
   std::vector<CommunicationGroup> comm_group_vector_;

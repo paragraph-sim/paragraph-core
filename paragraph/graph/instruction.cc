@@ -156,6 +156,70 @@ absl::Status Instruction::CheckIfConnected(bool drop_disconnected) {
   return absl::OkStatus();
 }
 
+absl::Status Instruction::DropEmptyInnerSubroutines() {
+  // First, trim nested instructions that belong to inner subroutine
+  if (OpcodeIsGeneralPurpose(opcode_) || OpcodeIsControlFlow(opcode_)) {
+    for (auto& subroutine : inner_subroutines_) {
+      for (auto& instruction : subroutine->Instructions()) {
+        RETURN_IF_ERROR(instruction->DropEmptyInnerSubroutines());
+      }
+    }
+  }
+  // Second, check if inner subroutine can be deleted
+  // We only delete subroutines from Call, and Null instructions,
+  // Delay instructions should not have inner subroutines to be deleted
+  std::vector<Subroutine*> subroutines_to_delete;
+  if ((opcode_ == Opcode::kCall) ||
+      (opcode_ == Opcode::kDelay) ||
+      (opcode_ == Opcode::kNull)) {
+    for (auto& subroutine : inner_subroutines_) {
+      RETURN_IF_FALSE(opcode_ != Opcode::kDelay, absl::InternalError) <<
+        "Instruction " << name_ << " has opcode 'Delay', but has inner " <<
+        "subroutine " << subroutine->GetName();
+      bool can_drop = true;
+      double total_seconds = 0;
+      double total_ops = 0;
+      double total_transcendentals = 0;
+      double total_bytes_in = 0;
+      double total_bytes_out = 0;
+      for (auto& instruction : subroutine->Instructions()) {
+        // We only can drop subroutines in general purpose instructions that
+        // has no subroutines
+        // If there was a Call instruction with dropable subroutine, its opcode
+        // should've been changed to Delay
+        if ((instruction->GetOpcode() != Opcode::kDelay) &&
+            (instruction->GetOpcode() != Opcode::kNull)) {
+          can_drop = false;
+        }
+        if (!instruction->InnerSubroutines().empty()) {
+          can_drop = false;
+        }
+        total_seconds += instruction->GetSeconds();
+        total_ops += instruction->GetOps();
+        total_transcendentals += instruction->GetTranscendentals();
+        total_bytes_in += instruction->GetBytesIn();
+        total_bytes_out += instruction->GetBytesOut();
+      }
+      if (can_drop &&
+          (total_seconds == 0) &&
+          (total_ops == 0) &&
+          (total_transcendentals == 0) &&
+          (total_bytes_in == 0) &&
+          (total_bytes_out == 0)) {
+        subroutines_to_delete.push_back(subroutine.get());
+      }
+    }
+  }
+  for (auto& subroutine : subroutines_to_delete) {
+    RETURN_IF_ERROR(RemoveInnerSubroutine(subroutine));
+  }
+  // Change Call opcode to Delay if we trimmed all its subroutines
+  if ((opcode_ == Opcode::kCall) && inner_subroutines_.empty()) {
+    opcode_ = Opcode::kDelay;
+  }
+  return absl::OkStatus();
+}
+
 Instruction* Instruction::GetBondedInstruction() {
   return bonded_instruction_;
 }
@@ -214,7 +278,7 @@ absl::Status Instruction::RemoveInnerSubroutine(Subroutine* subroutine) {
       name_ << " inner subroutines.";
   RETURN_IF_FALSE(subroutine == (*subroutine_it).get(),
                   absl::InternalError) << "Target subroutine " <<
-      subroutine->GetName() << "internal pointer is broken.";
+      subroutine->GetName() << " internal pointer is broken.";
   inner_subroutines_.erase(
       std::remove_if(inner_subroutines_.begin(), inner_subroutines_.end(),
                      [&](const std::unique_ptr<Subroutine>& subr) {
@@ -236,7 +300,7 @@ absl::Status Instruction::ReplaceInnerSubroutine(
       name_ << " inner subroutines.";
   RETURN_IF_FALSE(target_subroutine == (*subroutine_it).get(),
                   absl::InternalError) << "Target subroutine " <<
-      target_subroutine->GetName() << "internal pointer is broken.";
+      target_subroutine->GetName() << " internal pointer is broken.";
   new_subroutine->SetCallingInstruction(this);
   (*subroutine_it).swap(new_subroutine);
   return absl::OkStatus();

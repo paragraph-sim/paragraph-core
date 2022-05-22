@@ -79,7 +79,12 @@ class Graph {
 
   // Checks if all instructions in the graph are reachable in PostOrder view
   bool IsConnected();
-  //
+
+  // Drops empty branches of the graph, meaning subroutines belonging to
+  // general purpose instructions in which all embedded instructions has zero
+  // seconds assigned
+  absl::Status TrimGraph();
+
   // Recursively drops all disconnected instructions from the graph
   absl::Status DropDisconnected();
 
